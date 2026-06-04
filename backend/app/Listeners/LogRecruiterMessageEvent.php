@@ -7,7 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Events\RecruiterSentMessage;
 use App\Models\RecruiterEvent;
 
-class LogRecruiterMessageEvent
+class LogRecruiterMessageEvent implements ShouldQueue
 {
     /**
      * Create the event listener.
