@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMessageRequest;
 use App\Models\Message;
 use Illuminate\Http\JsonResponse;
+use App\Events\RecruiterSentMessage;
 
 class MessageController extends Controller
 {
@@ -14,6 +15,8 @@ class MessageController extends Controller
         $message = Message::create(
             $request->validated()
         );
+
+        recruiterSentMessage::dispatch($message);
 
         return response()->json([
             'success' => true,
