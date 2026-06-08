@@ -1,13 +1,15 @@
+import HeroSection from '../components/home/HeroSection';
+import SkillsSection from '../components/home/SkillsSection';
+import ProjectsSection from '../components/home/ProjectsSection';
+import CertificationsSection from '../components/home/CertificationsSection';
+
 export default function Home() {
     return (
-        <div>
-            <h1 className="text-4xl font-bold">
-                Sayed Ahmad Nawid Sayedzada
-            </h1>
-
-            <p className="mt-4">
-                Full Stack Developer | AWS Certified Solutions Architect Associate
-            </p>
-        </div>
+        <>
+            <HeroSection />
+            <SkillsSection />
+            <ProjectsSection />
+            <CertificationsSection />
+        </>
     );
 }
