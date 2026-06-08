@@ -10,6 +10,14 @@ use App\Events\RecruiterSentMessage;
 
 class MessageController extends Controller
 {
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            Message::latest()->paginate(10)
+        );
+    }
+    
     public function store(StoreMessageRequest $request): JsonResponse
     {
         $message = Message::create(
