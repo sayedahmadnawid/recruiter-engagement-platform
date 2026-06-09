@@ -11,14 +11,11 @@ const certificates = [
 
 export default function CertificatesSection() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto px-6 py-16">
       <div className="rounded-2xl bg-white/80 backdrop-blur-md border border-gray-100 shadow-xl p-6">
-        
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Certifications
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-800">Certifications</h2>
           <p className="text-sm text-gray-500 mt-1">
             Professional credentials and achievements
           </p>
@@ -35,12 +32,8 @@ export default function CertificatesSection() {
             >
               {/* Left side */}
               <div>
-                <h3 className="text-gray-800 font-semibold">
-                  {cert.name}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  AWS Certification
-                </p>
+                <h3 className="text-gray-800 font-semibold">{cert.name}</h3>
+                <p className="text-xs text-gray-500 mt-1">AWS Certification</p>
               </div>
 
               {/* Right side - Credential link */}
