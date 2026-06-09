@@ -1,39 +1,41 @@
 import { Link } from 'react-router-dom';
+
 export default function HeroSection() {
     return (
-        
-        <section className="max-w-4xl py-10 mx-auto p-6">
-            
-            <div className="max-w-4xl">
-                <p className="text-lg text-gray-600">
-                    Full Stack Developer
-                </p>
+        <section className="max-w-4xl mx-auto px-6 py-12">
+            <p className="text-lg font-medium text-gray-600">
+                Full Stack Developer
+            </p>
 
-                <h1 className="text-5xl font-bold mt-4">
-                    Sayed Ahmad Nawid
-                </h1>
+            <h1 className="mt-4 text-5xl font-bold tracking-tight">
+                Sayed Ahmad Nawid
+            </h1>
 
-                <p className="mt-6 text-xl text-gray-700">
-                    Building scalable web applications using Laravel,
-                    React, AWS, Docker, and modern cloud-native
-                    technologies.
-                </p>
+            <p className="mt-4 text-lg text-gray-600">
+                AWS Certified Solutions Architect – Associate
+            </p>
 
-                <div className="flex gap-4 mt-8">
-                    <Link
-                        to="/projects"
-                        className="px-6 py-3 rounded-lg border"
-                    >
-                        View Projects
-                    </Link>
+            <p className="mt-6 text-xl leading-relaxed text-gray-700">
+                Full Stack Developer with experience building enterprise
+                applications, e-commerce platforms, and cloud-native
+                solutions using Laravel, React, Vue.js, AWS, Docker,
+                and MySQL.
+            </p>
 
-                    <Link
-                        to="/contact"
-                        className="px-6 py-3 rounded-lg border"
-                    >
-                        Contact Me
-                    </Link>
-                </div>
+            <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                    to="/projects"
+                    className="rounded-lg border px-6 py-3 font-medium transition hover:bg-gray-100"
+                >
+                    View Projects
+                </Link>
+
+                <Link
+                    to="/contact"
+                    className="rounded-lg border px-6 py-3 font-medium transition hover:bg-gray-100"
+                >
+                    Contact Me
+                </Link>
             </div>
         </section>
     );
