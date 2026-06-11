@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { Form, useRouteLoaderData } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
+  const token = useRouteLoaderData("root");
+
+  const navClass = ({ isActive }) =>
+    isActive
+      ? "px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium shadow-md"
+      : "px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200";
+
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-100">
       <nav className="max-w-6xl mx-auto px-6 py-4">
@@ -15,33 +24,32 @@ export default function Navbar() {
 
           {/* Navigation */}
           <div className="flex items-center gap-2">
-            <Link
-              to="/"
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-            >
+            <NavLink to="/" end className={navClass}>
               Home
-            </Link>
+            </NavLink>
 
-            <Link
-              to="/projects"
-              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
-            >
+            <NavLink to="/projects" className={navClass}>
               Projects
-            </Link>
+            </NavLink>
 
-            <Link
-              to="/contact"
-              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
-            >
+            <NavLink to="/contact" className={navClass}>
               Contact
-            </Link>
-
-            <Link
-              to="/dashboard"
-              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
-            >
-              Dashboard
-            </Link>
+            </NavLink>
+            {token && (
+              <NavLink to="/dashboard" className={navClass}>
+                Dashboard
+              </NavLink>
+            )}
+            {!token && (
+              <NavLink to="/auth" className={navClass}>
+                Login
+              </NavLink>
+            )}
+            {token && (
+              <Form action="/logout" method="post">
+                <button className={navClass}>Logout</button>
+              </Form>
+            )}
           </div>
         </div>
       </nav>
