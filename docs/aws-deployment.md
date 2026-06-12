@@ -102,23 +102,17 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
 
-### Install 
-```
+## AWS Infrastructure
 
-```
-### Install 
-```
+### EC2
+- Instance Type: t3.micro
+- OS: Ubuntu 26.04
 
-```
-### Install 
-```
+### RDS
+- Engine: MySQL 8.4.9
+- Instance Type: db.t3.micro
+- Database: recruiter_platform
 
-```
-### Install 
-```
-
-```
-### Install 
-```
-
-```
+### Connectivity
+- EC2 connected to RDS through AWS managed security group association
+- Public database access disabled
