@@ -1,4 +1,4 @@
-name: Test Native SSH Connection
+name: Deploy to AWS
 
 on:
   push:
@@ -7,24 +7,42 @@ on:
       - feature/github-actions-cicd
 
 jobs:
-  test-ssh:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4.2.2
 
-      - name: SSH via Native Linux Client
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: composer install --no-interaction
+
+      - name: Run Laravel Tests
+        working-directory: backend
+        run: php artisan test
+
+      - name: Deploy to EC2 via Native SSH
         run: |
           # 1. Start the SSH agent
           eval $(ssh-agent -s)
           
-          # 2. Save the key from secrets to a temporary file and set permissions
+          # 2. Save the key from secrets to a temporary file and restrict permissions
           echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
           
-          # 3. Add the key to the agent
+          # 3. Add the private key to the agent
           ssh-add private_key.pem
           
-          # 4. Run SSH with a strict 15-second timeout and Verbose debugging flags (-vvv)
-          ssh -o ConnectTimeout=15 -o StrictHostKeyChecking=no -vvv ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'Native connection works! 🚀'; hostname"
+          # 4. Connect and execute deployment commands on the remote EC2 instance
+          ssh -o ConnectTimeout=15 -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+            cd /var/www/recruiter-engagement-platform && \
+            git pull origin main && \
+            docker compose -f docker-compose.prod.yml down && \
+            docker compose -f docker-compose.prod.yml up -d --build
+          "
