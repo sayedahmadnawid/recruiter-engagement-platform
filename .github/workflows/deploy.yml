@@ -1,10 +1,5 @@
 name: Deploy to AWS
 
-- name: Debug Secret Check
-        run: |
-          echo "Is EC2_HOST empty?"
-          echo "${{ secrets.EC2_HOST == '' }}"
-
 on:
   push:
     branches:
@@ -16,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug Secret Check
+        run: |
+          echo "Is EC2_HOST empty?"
+          echo "${{ secrets.EC2_HOST == '' }}"
+
       - name: Use Node 20 explicitly
         uses: actions/setup-node@v4
         with:
