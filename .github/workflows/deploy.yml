@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Test EC2 Connection
 
 on:
   push:
@@ -7,30 +7,20 @@ on:
       - feature/github-actions-cicd
 
 jobs:
-  test-and-deploy:
+  test-ssh:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug Secret Check
-        run: |
-          echo "Is EC2_HOST empty?"
-          echo "${{ secrets.EC2_HOST == '' }}"
-
-      - name: Use Node 20 explicitly
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Test SSH Connection
+      - name: Execute Remote SSH Commands
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "Connected successfully 🚀"
+            echo "Successfully connected to EC2! 🚀"
             hostname
             pwd
