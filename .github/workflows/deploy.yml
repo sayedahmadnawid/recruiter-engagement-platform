@@ -1,6 +1,6 @@
 name: Deploy to AWS
 
-on:
+'on':
   workflow_dispatch:
   push:
     branches:
