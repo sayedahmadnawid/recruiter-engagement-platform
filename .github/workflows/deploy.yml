@@ -1,4 +1,4 @@
-name: Test EC2 Connection
+name: Test Native SSH Connection
 
 on:
   push:
@@ -14,13 +14,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Execute Remote SSH Commands
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            echo "Successfully connected to EC2! 🚀"
-            hostname
-            pwd
+      - name: SSH via Native Linux Client
+        run: |
+          # 1. Start the SSH agent
+          eval $(ssh-agent -s)
+          
+          # 2. Save the key from secrets to a temporary file and set permissions
+          echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          
+          # 3. Add the key to the agent
+          ssh-add private_key.pem
+          
+          # 4. Run SSH with a strict 15-second timeout and Verbose debugging flags (-vvv)
+          ssh -o ConnectTimeout=15 -o StrictHostKeyChecking=no -vvv ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'Native connection works! 🚀'; hostname"
