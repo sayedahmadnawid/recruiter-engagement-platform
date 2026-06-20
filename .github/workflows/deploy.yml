@@ -1,5 +1,10 @@
 name: Deploy to AWS
 
+- name: Debug Secret Check
+        run: |
+          echo "Is EC2_HOST empty?"
+          echo "${{ secrets.EC2_HOST == '' }}"
+
 on:
   push:
     branches:
