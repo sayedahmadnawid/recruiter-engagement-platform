@@ -1,0 +1,54 @@
+name: Deploy to AWS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - feature/github-actions-cicd
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: composer install --no-interaction
+
+      - name: Copy Environment File
+        working-directory: backend
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Generate Application Key
+        working-directory: backend
+        run: php artisan key:generate
+
+      - name: Run Laravel Tests
+        working-directory: backend
+        run: php artisan test
+
+      - name: Deploy to EC2 via Native SSH
+        run: |
+          eval $(ssh-agent -s)
+
+          echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+          ssh-add private_key.pem
+
+          ssh -o ConnectTimeout=15 -o StrictHostKeyChecking=no \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+              cd /var/www/recruiter-engagement-platform && \
+              git fetch --all && \
+              git reset --hard origin/main && \
+              docker compose -f docker-compose.prod.yml down && \
+              docker compose -f docker-compose.prod.yml up -d --build
+            "
