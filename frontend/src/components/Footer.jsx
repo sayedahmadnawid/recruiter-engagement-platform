@@ -56,14 +56,14 @@ export default function Footer() {
 
           <div className="flex gap-4 text-sm">
             <a
-              href="https://github.com"
+              href="https://github.com/sayedahmadnawid/recruiter-engagement-platform"
               target="_blank"
               className="text-gray-500 hover:text-gray-900 transition"
             >
               GitHub
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/sayednawid/"
               target="_blank"
               className="text-gray-500 hover:text-gray-900 transition"
             >
