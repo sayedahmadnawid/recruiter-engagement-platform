@@ -1,10 +1,23 @@
-# Recruiter Engagement Platform (HireSignal)
 
-## Overview
+# Recruiter Engagement Platform (RecruitSignal)
 
-Recruiter Engagement Platform (HireSignal) is a full-stack, cloud-native application designed to demonstrate modern software engineering practices using Laravel, React, and AWS.
+RecruitSignal is a full-stack, cloud-native application designed to demonstrate modern software engineering practices using **Laravel**, **React**, and **AWS**.
 
+## 🎯 Project Goals
 The goal of this project is not only to build a functional application, but to showcase how a production-like system is designed, developed, and evolved using industry-standard architecture principles such as event-driven design, modular backend services, and cloud infrastructure automation.
+
+## 🚀 Ongoing Evolution & Serverless Architecture
+In my spare time, I am constantly evolving the platform by architecting and deploying new features to expand its capabilities. A major focus of this ongoing development is the integration of AWS Lambda functions to transform the system into a highly responsive, event-driven application. 
+
+By decoupling intensive backend tasks—such as processing candidate data pipeline events, handling real-time notifications, and managing asynchronous background queues—into serverless functions, I am actively demonstrating how the application can dynamically scale on-demand while maintaining a lean, highly efficient cloud infrastructure footprint.
+
+---
+
+## 🌐 Live Demo
+Production URL:
+https://recruitsignal.app
+
+RecruitSignal is a recruiter engagement platform that helps organizations collect, manage, and process candidate inquiries through a modern web application built with Laravel, React, Docker, and AWS.
 
 ---
 
@@ -26,7 +39,7 @@ The target audience includes recruiters, hiring managers, and engineering teams 
 
 ## Core Idea
 
-HireSignal simulates a recruiter engagement system where:
+RecruitSignal simulates a recruiter engagement system where:
 
 * Recruiters can discover a developer profile and portfolio
 * Recruiters can subscribe to updates
@@ -99,15 +112,111 @@ Each commit is intended to represent a meaningful step in system evolution, not 
 
 ---
 
+## Architecture Diagram
+<p align="center">
+<pre>
+
+                    ┌─────────────┐
+                    │   End User  │
+                    └──────┬──────┘
+                           │ HTTPS
+                           ▼
+                 ┌────────────────────┐
+                 │ recruitsignal.app  │
+                 └─────────┬──────────┘
+                           │
+                           ▼
+                 ┌────────────────────┐
+                 │  Nginx (Docker)    │
+                 │ Reverse Proxy      │
+                 └─────────┬──────────┘
+                           │
+                           ▼
+                 ┌────────────────────┐
+                 │ Laravel API        │
+                 │ PHP 8.4            │
+                 │ Docker Container   │
+                 └─────────┬──────────┘
+                           │
+                           ▼
+                 ┌────────────────────┐
+                 │ Amazon RDS MySQL   │
+                 │ Managed Database   │
+                 └────────────────────┘
+
+                 ┌────────────────────┐
+                 │ Queue Worker       │
+                 │ Laravel Queues     │
+                 │ Docker Container   │
+                 └────────────────────┘
+</pre>
+</p>
+---
+
 ## Tech Stack
 
-* Backend: Laravel
-* Frontend: React
-* Database: MySQL
-* Infrastructure: AWS (EC2, SES, CloudFormation)
-* Background Jobs: Laravel Queue System
+### Frontend
+* React
+* Vite
+* Tailwind CSS
+* Axios
+* React Router
+### Backend
+* Laravel 12/13
+* PHP 8.4
+* Laravel Queue Workers
+* RESTful API
+### Database
+* Amazon RDS MySQL
+### Infrastructure
+* AWS EC2 (Ubuntu)
+* Docker
+* Docker Compose
+* Nginx
+* Let's Encrypt SSL
+### DevOps
+* Git
+* GitHub
+* GitHub Actions (CI/CD)
+* Dockerized Production Deployment
 
 ---
+### Deployment Workflow Architecture
+
+<p align="center">
+<pre>
+       Developer
+           │
+           │ Push Code
+           ▼
+   GitHub Repository
+           │
+           │ GitHub Actions
+           ▼
+     CI/CD Pipeline
+           │
+           │ Secure SSH Deployment
+           ▼
+     AWS EC2 Server
+           │
+           ├── Pull Latest Code
+           ├── Rebuild Containers
+           ├── Restart Services
+           └── Verify Deployment
+           │
+           ▼
+   recruitsignal.app
+</pre>
+</p>
+
+### Deployment Process
+1. Developer creates a feature branch.
+2. Changes are committed and pushed to GitHub.
+3. A Pull Request is reviewed and merged into main.
+4. GitHub Actions automatically triggers the deployment workflow.
+5. The workflow connects securely to the AWS EC2 instance.
+6. Docker containers are rebuilt and restarted.
+7. The updated application becomes available at https://recruitsignal.app.
 
 ## Goal
 
