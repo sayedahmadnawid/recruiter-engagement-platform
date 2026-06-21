@@ -2,13 +2,24 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Laravel\Sanctum\Sanctum;
 
 class MessageApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected User $authUser;
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->authUser = User::factory()->create();
+        Sanctum::actingAs($this->authUser);
+    }
 
     public function test_message_can_be_submitted(): void
     {
