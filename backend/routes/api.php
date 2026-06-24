@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\RecruiterEventController;
+use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\AuthController;
 
 Route::get('/user', function (Request $request) {
@@ -29,6 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Recruiter events endpoint
     Route::get('/recruiter-events', [RecruiterEventController::class, 'index']);
+
+    // Lead management endpoints
+    Route::apiResource('leads', LeadController::class);
 });
 
 // Health check endpoint
