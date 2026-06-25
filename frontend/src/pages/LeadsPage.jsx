@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getLeads } from "../services/leadService";
+import LeadForm from "../components/leads/LeadForm";
+import { createLead } from "../services/leadService";
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
@@ -7,6 +9,15 @@ export default function LeadsPage() {
   useEffect(() => {
     loadLeads();
   }, []);
+
+  const handleCreateLead = async (leadData) => {
+    try {
+      await createLead(leadData);
+      await loadLeads();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const loadLeads = async () => {
     try {
@@ -19,6 +30,7 @@ export default function LeadsPage() {
 
   return (
     <div>
+      <LeadForm onSubmit={handleCreateLead} />
       <h1>Leads</h1>
 
       <p>Total Leads: {leads.length}</p>
