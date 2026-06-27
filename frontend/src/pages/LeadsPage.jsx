@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getLeads } from "../services/leadService";
 import LeadForm from "../components/leads/LeadForm";
-import { createLead } from "../services/leadService";
+import { getLeads, createLead, deleteLead } from "../services/leadService";
+import LeadTable from "../components/leads/LeadTable";
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
@@ -9,15 +9,6 @@ export default function LeadsPage() {
   useEffect(() => {
     loadLeads();
   }, []);
-
-  const handleCreateLead = async (leadData) => {
-    try {
-      await createLead(leadData);
-      await loadLeads();
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const loadLeads = async () => {
     try {
@@ -28,20 +19,40 @@ export default function LeadsPage() {
     }
   };
 
+  const handleCreateLead = async (leadData) => {
+    try {
+      await createLead(leadData);
+      await loadLeads();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEditLead = (lead) => {
+    console.log("Edit lead", lead);
+  };
+
+  const handleDeleteLead = async (id) => {
+    const confirmed = window.confirm("Delete this lead?");
+
+    if (!confirmed) return;
+
+    try {
+      await deleteLead(id);
+      await loadLeads();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <LeadForm onSubmit={handleCreateLead} />
-      <h1>Leads</h1>
-
-      <p>Total Leads: {leads.length}</p>
-
-      <ul>
-        {leads.map((lead) => (
-          <li key={lead.id}>
-            {lead.name} - {lead.company}
-          </li>
-        ))}
-      </ul>
+      <LeadTable 
+      leads={leads}
+      onEdit={handleEditLead}
+      onDelete={handleDeleteLead}
+       />
     </div>
   );
 }
