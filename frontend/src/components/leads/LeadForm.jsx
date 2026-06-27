@@ -1,16 +1,31 @@
 // LeadForm.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
 
-export default function LeadForm({ onSubmit }) {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    company: "",
-    job_title: "",
-    linkedin_url: "",
-    notes: "",
-  });
+export default function LeadForm({ initialData, onSubmit, onCancel }) {
+  const [form, setForm] = useState(
+    initialData || {
+      name: "",
+      email: "",
+      company: "",
+      job_title: "",
+      linkedin_url: "",
+      notes: "",
+    },
+  );
+
+  useEffect(() => {
+    setForm(
+      initialData || {
+        name: "",
+        email: "",
+        company: "",
+        job_title: "",
+        linkedin_url: "",
+        notes: "",
+      },
+    );
+  }, [initialData]);
 
   const handleChange = (e) => {
     setForm({
@@ -107,10 +122,19 @@ export default function LeadForm({ onSubmit }) {
         <div className="pt-2">
           <button
             type="submit"
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+            className="w-full flex justify-center py-2.5 px-4 my-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
           >
-            Add Lead
+            {initialData ? "Update Lead" : "Add Lead"}
           </button>
+          {initialData && (
+            <button
+              type="button"
+              className="w-full flex justify-center py-2.5 px-4 my-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+              onClick={() => onCancel()}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </form>
     </div>
