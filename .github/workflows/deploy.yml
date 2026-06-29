@@ -49,6 +49,11 @@ jobs:
               cd /var/www/recruiter-engagement-platform && \
               git fetch --all && \
               git reset --hard origin/main && \
+              cd frontend && \
+              npm ci && \
+              npm run build && \
+              cd .. && \
               docker compose -f docker-compose.prod.yml down && \
-              docker compose -f docker-compose.prod.yml up -d --build
+              docker compose -f docker-compose.prod.yml up -d --build && \
+              docker compose -f docker-compose.prod.yml exec -T backend php artisan optimize
             "
