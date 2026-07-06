@@ -1,4 +1,6 @@
-export default function LeadTable({ leads = [], onEdit, onDelete }) {
+import LeadStatusBadge from "./LeadStatusBadge";
+
+export default function LeadTable({ leads = [], onEdit, onDelete, onStatusChange }) {
   return (
     <div className="w-full overflow-x-auto rounded-xl border border-gray-100 shadow-md bg-white my-12">
       <table className="w-full min-w-[800px] border-collapse text-left text-sm text-gray-500">
@@ -71,30 +73,12 @@ export default function LeadTable({ leads = [], onEdit, onDelete }) {
 
                 {/* Status Badge */}
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      lead.status?.toLowerCase() === "active" ||
-                      lead.status?.toLowerCase() === "won"
-                        ? "bg-green-50 text-green-700 border border-green-200"
-                        : lead.status?.toLowerCase() === "pending" ||
-                            lead.status?.toLowerCase() === "contacted"
-                          ? "bg-amber-50 text-amber-700 border border-amber-200"
-                          : "bg-gray-50 text-gray-600 border border-gray-200"
-                    }`}
-                  >
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        lead.status?.toLowerCase() === "active" ||
-                        lead.status?.toLowerCase() === "won"
-                          ? "bg-green-600"
-                          : lead.status?.toLowerCase() === "pending" ||
-                              lead.status?.toLowerCase() === "contacted"
-                            ? "bg-amber-500"
-                            : "bg-gray-400"
-                      }`}
-                    />
-                    {lead.status || "New"}
-                  </span>
+                  <LeadStatusBadge
+                    status={lead.status}
+                    onStatusChange={(newStatus) =>
+                      onStatusChange(lead.id, newStatus)
+                    }
+                  />
                 </td>
 
                 {/* Actions */}

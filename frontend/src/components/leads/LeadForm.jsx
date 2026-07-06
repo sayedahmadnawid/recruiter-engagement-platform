@@ -1,6 +1,8 @@
 // LeadForm.jsx
 import { useState, useEffect } from "react";
 import InputField from "../ui/InputField";
+import SelectField from "../ui/SelectField";
+import { STATUS_OPTIONS } from "../../constants/leads";
 
 export default function LeadForm({ initialData, onSubmit, onCancel }) {
   const [form, setForm] = useState(
@@ -107,6 +109,15 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           placeholder="https://linkedin.com/in/username"
           value={form.linkedin_url}
           onChange={handleChange}
+        />
+
+        <SelectField
+          label="Lead Status"
+          name="status"
+          value={form.status}
+          onChange={handleChange}
+          options={STATUS_OPTIONS}
+          required
         />
 
         <InputField

@@ -17,13 +17,21 @@ class LeadFactory extends Factory
      */
     public function definition(): array
     {
-         return [
+        return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'company' => fake()->company(),
             'job_title' => fake()->jobTitle(),
             'linkedin_url' => 'https://linkedin.com/in/' . fake()->userName(),
-            'status' => 'new',
+            'status' => fake()->randomElement([
+                'new',
+                'contacted',
+                'responded',
+                'interviewing',
+                'offer',
+                'hired',
+                'rejected',
+            ]),
             'notes' => fake()->sentence(),
         ];
     }

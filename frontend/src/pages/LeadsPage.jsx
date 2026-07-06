@@ -5,6 +5,7 @@ import {
   createLead,
   deleteLead,
   updateLead,
+  updateLeadStatus,
 } from "../services/leadService";
 import LeadTable from "../components/leads/LeadTable";
 
@@ -61,6 +62,23 @@ export default function LeadsPage() {
     }
   };
 
+  const handleStatusChange = async (leadId, newStatus) => {
+    const originalLeads = [...leads];
+
+    setLeads((prevLeads) =>
+      prevLeads.map((lead) =>
+        lead.id === leadId ? { ...lead, status: newStatus } : lead,
+      ),
+    );
+
+    try {
+      await updateLeadStatus(leadId, newStatus);
+    } catch (error) {
+      console.error("Status update failed:", error);
+      setLeads(originalLeads);
+    }
+  };
+
   return (
     <div>
       <LeadForm
@@ -72,6 +90,7 @@ export default function LeadsPage() {
         leads={leads}
         onEdit={handleEditLead}
         onDelete={handleDeleteLead}
+        onStatusChange={handleStatusChange}
       />
     </div>
   );

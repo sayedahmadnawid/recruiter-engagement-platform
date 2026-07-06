@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreLeadRequest extends FormRequest
 {
@@ -29,8 +30,16 @@ class StoreLeadRequest extends FormRequest
             'job_title' => ['nullable', 'string', 'max:255'],
             'linkedin_url' => ['nullable', 'url', 'max:255'],
             'status' => [
-                'sometimes',
-                'in:new,contacted,responded,interviewing,offer,hired,rejected'
+                'required',
+                Rule::in([
+                    'new',
+                    'contacted',
+                    'responded',
+                    'interviewing',
+                    'offer',
+                    'hired',
+                    'rejected',
+                ]),
             ],
             'notes' => ['nullable', 'string'],
         ];
