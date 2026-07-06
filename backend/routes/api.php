@@ -33,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Lead management endpoints
     Route::apiResource('leads', LeadController::class);
+    
+    // Update lead status endpoint
+    Route::patch('/leads/{lead}/status', [LeadController::class, 'updateStatus']);
 });
 
 // Health check endpoint

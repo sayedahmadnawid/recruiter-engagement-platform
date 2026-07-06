@@ -62,4 +62,18 @@ class LeadController extends Controller
             'message' => 'Lead deleted successfully',
         ]);
     }
+
+    /**
+     * Update the status of the specified lead.
+     */
+    public function updateStatus(UpdateLeadRequest $request, Lead $lead)
+    {
+        $lead->update(
+            $request->only('status')
+        );
+
+        return response()->json([
+            'message' => 'Status updated successfully.',
+        ]);
+    }
 }
