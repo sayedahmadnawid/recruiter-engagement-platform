@@ -110,6 +110,20 @@ class LeadApiTest extends TestCase
         ]);
     }
 
+    public function test_authenticated_user_rejects_invalid_status_values()
+    {
+        $user = User::factory()->create();
+        $lead = Lead::factory()->create(['status' => 'new']);
+
+        $response = $this->actingAs($user, 'api')
+            ->patchJson("/api/leads/{$lead->id}/status", [
+                'status' => 'invalid-status-value'
+            ]);
+
+        $response->assertStatus(422);
+    }
+
+
     public function test_guest_cannot_access_lead_endpoints(): void
     {
         $response = $this->getJson('/api/leads');
