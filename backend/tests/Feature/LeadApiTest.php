@@ -29,6 +29,7 @@ class LeadApiTest extends TestCase
                 'company' => 'ABC Corp',
                 'job_title' => 'Software Engineer',
                 'linkedin_url' => 'https://www.linkedin.com/in/sayednawid',
+                'status' => 'new',
                 'notes' => 'Potential opportunity',
             ]);
 
