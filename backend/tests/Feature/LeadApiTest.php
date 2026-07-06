@@ -116,7 +116,7 @@ class LeadApiTest extends TestCase
         $user = User::factory()->create();
         $lead = Lead::factory()->create(['status' => 'new']);
 
-        $response = $this->actingAs($user, 'api')
+        $response = $this->actingAs($user, 'sanctum')
             ->patchJson("/api/leads/{$lead->id}/status", [
                 'status' => 'invalid-status-value'
             ]);
