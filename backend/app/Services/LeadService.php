@@ -36,6 +36,6 @@ class LeadService
 
         // 4. Return standard length-aware pagination payload (e.g., 10 entries per page)
         // Laravel reads the matching 'page' query URL query parameter automatically under the hood
-        return $query->paginate(10);
+        return $query->paginate(1);
     }
 }
