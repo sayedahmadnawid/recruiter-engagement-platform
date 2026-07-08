@@ -61,7 +61,7 @@ class LeadApiTest extends TestCase
             ->getJson('/api/leads');
 
         $response->assertStatus(200);
-        $response->assertJsonCount(3);
+        $response->assertJsonCount(3, 'data');
     }
 
     public function test_authenticated_user_can_view_a_single_lead(): void
