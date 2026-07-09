@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/messages', [MessageController::class, 'store']);
 
     // Dashboard stats endpoint
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+    //Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
     // Recruiter events endpoint
     Route::get('/recruiter-events', [RecruiterEventController::class, 'index']);
@@ -36,6 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Update lead status endpoint
     Route::patch('/leads/{lead}/status', [LeadController::class, 'updateStatus']);
+
+    // Dashboard stats endpoint
+    Route::get('/dashboard/stats', [LeadController::class, 'dashboard']);
 });
 
 // Health check endpoint

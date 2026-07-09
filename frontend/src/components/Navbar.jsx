@@ -36,9 +36,14 @@ export default function Navbar() {
               Contact
             </NavLink>
             {token && (
-              <NavLink to="/dashboard" className={navClass}>
-                Dashboard
-              </NavLink>
+              <>
+                <NavLink to="/leads" className={navClass}>
+                  Leads
+                </NavLink>
+                <NavLink to="/dashboard" className={navClass}>
+                  Dashboard
+                </NavLink>
+              </>
             )}
             {!token && (
               <NavLink to="/auth" className={navClass}>
