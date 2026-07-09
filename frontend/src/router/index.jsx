@@ -11,7 +11,7 @@ import AuthenticationPage, {
   action as authAction,
 } from "../pages/Authentication";
 import { tokenLoader } from "../services/authService";
-
+import DashboardPage from "../pages/DashboardPage";
 
 export const router = createBrowserRouter([
   {
@@ -37,10 +37,26 @@ export const router = createBrowserRouter([
         element: <Contact />,
       },
       {
+        path: "leads",
+        element: (
+          <ProtectedRoute>
+            <LeadsPage />
+          </ProtectedRoute>
+        ),
+      },
+      /* {
         path: "dashboard",
         element: (
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        ),
+      }, */
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
           </ProtectedRoute>
         ),
       },

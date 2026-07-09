@@ -78,4 +78,14 @@ class LeadController extends Controller
             'message' => 'Status updated successfully.',
         ]);
     }
+
+    /**
+     * Retrieve aggregated statistics for the metric dashboard charts and summaries.
+     */
+    public function dashboard()
+    {
+        return response()->json(
+            LeadService::getDashboardStats()
+        );
+    }
 }

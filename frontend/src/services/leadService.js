@@ -23,4 +23,9 @@ export const deleteLead = async (id) => {
 export const updateLeadStatus = async (id, status) => {
   const response = await api.patch(`/leads/${id}/status`, { status });
   return response.data;
-}
+};
+
+export const getDashboardStats = async () => {
+  const response = await api.get("/dashboard/stats");
+  return response.data;
+};
