@@ -42,6 +42,7 @@ class StoreLeadRequest extends FormRequest
                 ]),
             ],
             'notes' => ['nullable', 'string'],
+            'resume'       => 'nullable|file|mimes:pdf,docx|max:4096',
         ];
     }
 }
