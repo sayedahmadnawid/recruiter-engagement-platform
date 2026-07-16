@@ -6,7 +6,11 @@ export const getLeads = async (params = {}) => {
 };
 
 export const createLead = async (lead) => {
-  const response = await api.post("/leads", lead);
+  const response = await api.post("/leads", lead, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 

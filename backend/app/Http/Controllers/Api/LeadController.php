@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Lead;
+use App\Models\Resume;
 use App\Services\LeadService;
+use Illuminate\Support\Facades\DB;
 
 class LeadController extends Controller
 {
@@ -26,11 +28,27 @@ class LeadController extends Controller
      */
     public function store(StoreLeadRequest $request)
     {
-        $lead = Lead::create(
-            $request->validated()
-        );
+        $lead = DB::transaction(function () use ($request) {
+            $lead = Lead::create($request->validated());
 
-        return response()->json($lead, 201);
+            // If a resume file was attached, handle it right here
+            if ($request->hasFile('resume')) {
+                $file = $request->file('resume');
+                $path = $file->store('resumes', 'local');
+
+                Resume::create([
+                    'lead_id'       => $lead->id,
+                    'original_name' => $file->getClientOriginalName(),
+                    'file_path'     => $path,
+                    'mime_type'     => $file->getClientMimeType(),
+                    'file_size'     => $file->getSize(),
+                ]);
+            }
+
+            return $lead;
+        });
+
+        return response()->json($lead->loadMissing('resume'), 201);
     }
 
     /**

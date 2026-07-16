@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Storage;
 
 class LeadApiTest extends TestCase
 {
@@ -130,5 +132,111 @@ class LeadApiTest extends TestCase
         $response = $this->getJson('/api/leads');
 
         $response->assertStatus(401);
+    }
+
+    /** @test */
+    /** @test */
+    public function test_authenticated_user_can_create_a_lead_with_a_resume_upload(): void
+    {
+        // 1. Fake the local storage driver so we don't write physical files to disk
+        Storage::fake('local');
+
+        // 2. Generate a fake PDF document
+        $fakeResume = UploadedFile::fake()->create('my_resume.pdf', 500, 'application/pdf');
+
+        $payload = [
+            'name'         => 'Sayed Nawid',
+            'email'        => 'sayed@example.com',
+            'company'      => 'ABC Corp',
+            'job_title'    => 'Software Engineer',
+            'linkedin_url' => 'https://www.linkedin.com/in/sayednawid',
+            'status'       => 'new',
+            'notes'        => 'Potential opportunity',
+            'resume'       => $fakeResume,
+        ];
+
+        // 3. Authenticate using Sanctum and send the POST payload
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->postJson('/api/leads', $payload);
+
+        // 4. Assert response is successful
+        $response->assertStatus(201);
+
+        // 5. Assert Lead was created in the database
+        $this->assertDatabaseHas('leads', [
+            'name'  => 'Sayed Nawid',
+            'email' => 'sayed@example.com',
+        ]);
+
+        $lead = Lead::where('email', 'sayed@example.com')->first();
+
+        // 6. Assert that the resume relationship record was written to the database
+        $this->assertDatabaseHas('resumes', [
+            'lead_id'       => $lead->id,
+            'original_name' => 'my_resume.pdf',
+            'mime_type'     => 'application/pdf',
+        ]);
+
+        // 7. Verify the file actually saved to our fake storage folder
+        $resume = $lead->resume;
+        $this->assertNotNull($resume);
+        Storage::disk('local')->assertExists($resume->file_path);
+    }
+
+    /** @test */
+    public function test_it_can_create_a_lead_without_a_resume()
+    {
+        // 1. Send the payload without the resume key to test the 'nullable' rule
+        $payload = [
+            'name'         => 'Sayed Ahmad Nawid',
+            'email'        => 'sayed@example.com',
+            'status'       => 'new',
+        ];
+
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->postJson('/api/leads', $payload);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('leads', [
+            'name'        => 'Sayed Ahmad Nawid',
+            'email'       => 'sayed@example.com',
+        ]);
+    }
+
+    /** @test */
+    public function test_it_fails_validation_if_resume_is_not_an_allowed_file_type(): void
+    {
+        // 1. Fake the local storage driver
+        Storage::fake('local');
+
+        // 2. Generate an invalid file (e.g., an executable)
+        $invalidFile = UploadedFile::fake()->create('malicious_payload.exe', 100, 'application/octet-stream');
+
+        $payload = [
+            'name'         => 'Sayed Nawid',
+            'email'        => 'sayed@example.com',
+            'company'      => 'ABC Corp',
+            'job_title'    => 'Software Engineer',
+            'linkedin_url' => 'https://www.linkedin.com/in/sayednawid',
+            'status'       => 'new',
+            'notes'         => 'Potential opportunity',
+            'resume'       => $invalidFile, // Attaching the invalid file
+        ];
+
+        // 3. Send authenticated request
+        $response = $this->actingAs($this->user, 'sanctum')
+            ->postJson('/api/leads', $payload);
+
+        // 4. Assert that validation fails with 422 Unprocessable Entity
+        $response->assertStatus(422);
+
+        // 5. Assert the exact error key is returned for the resume field
+        $response->assertJsonValidationErrors(['resume']);
+
+        // 6. Double check that the database remains untouched
+        $this->assertDatabaseMissing('leads', [
+            'email' => 'sayed@example.com',
+        ]);
     }
 }

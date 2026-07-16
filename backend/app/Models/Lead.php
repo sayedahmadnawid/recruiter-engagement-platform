@@ -17,4 +17,12 @@ class Lead extends Model
         'status',
         'notes',
     ];
+
+    /**
+     * Get the resume associated with the lead.
+     */
+    public function resume(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Resume::class);
+    }
 }
