@@ -2,11 +2,58 @@
 
 namespace App\Services;
 
+use App\Jobs\ProcessResume;
 use App\Models\Lead;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class LeadService
 {
+
+    /**
+     * Create a new lead and optionally attach a resume file.
+     *
+     * @param array $data
+     * @param \Illuminate\Http\UploadedFile|null $resumeFile
+     * @return Lead
+     */
+    public function createLead(array $data, ?UploadedFile $resumeFile = null): Lead
+    {
+        return DB::transaction(function () use ($data, $resumeFile) {
+            $lead = Lead::create($data);
+
+            if ($resumeFile) {
+                $this->attachResume($lead, $resumeFile);
+            }
+
+            return $lead;
+        });
+    }
+
+    /**
+     * Attach a resume file to the given lead and dispatch a job for processing.
+     *
+     * @param Lead $lead
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return void
+     */
+    protected function attachResume(Lead $lead, UploadedFile $file): void
+    {
+        $path = $file->store('resumes', 'local');
+
+        $resume = $lead->resume()->create([
+            'lead_id'       => $lead->id,
+            'original_name' => $file->getClientOriginalName(),
+            'file_path'     => $path,
+            'status'        => 'pending',
+            'mime_type'     => $file->getClientMimeType(),
+            'file_size'     => $file->getSize(),
+        ]);
+
+        ProcessResume::dispatch($resume);
+    }
+
     /**
      * Search, filter, and paginate leads.
      *
@@ -74,5 +121,4 @@ class LeadService
             'recent_leads' => $recentLeads,
         ];
     }
-    
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Resume extends Model
 {
@@ -16,6 +17,7 @@ class Resume extends Model
         'file_path',
         'mime_type',
         'file_size',
+        'status',
         'extracted_text',
         'parsed_data',
     ];
@@ -31,5 +33,25 @@ class Resume extends Model
     public function lead(): BelongsTo
     {
         return $this->belongsTo(Lead::class);
+    }
+
+    /**
+     * Get the absolute path to the resume file in storage.
+     *
+     * @return string
+     */
+    public function getAbsolutePathAttribute(): string
+    {
+        return Storage::disk($this->disk ?? 'local')->path($this->file_path);
+    }
+
+    /**
+     * Check if the resume file exists in storage.
+     *
+     * @return bool
+     */
+    public function fileExists(): bool
+    {
+        return Storage::disk($this->disk ?? 'local')->exists($this->file_path);
     }
 }
