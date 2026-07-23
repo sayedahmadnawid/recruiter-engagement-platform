@@ -6,8 +6,10 @@ use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\ProcessResume;
 
 class LeadApiTest extends TestCase
 {
@@ -135,11 +137,13 @@ class LeadApiTest extends TestCase
     }
 
     /** @test */
-    /** @test */
     public function test_authenticated_user_can_create_a_lead_with_a_resume_upload(): void
     {
         // 1. Fake the local storage driver so we don't write physical files to disk
         Storage::fake('local');
+
+        // 1.5 Fake the queue to prevent actual job dispatching during the test
+        Queue::fake();
 
         // 2. Generate a fake PDF document
         $fakeResume = UploadedFile::fake()->create('my_resume.pdf', 500, 'application/pdf');
@@ -181,6 +185,10 @@ class LeadApiTest extends TestCase
         $resume = $lead->resume;
         $this->assertNotNull($resume);
         Storage::disk('local')->assertExists($resume->file_path);
+
+        Queue::assertPushed(ProcessResume::class, function ($job) use ($resume) {
+            return $job->resume->id === $resume->id;
+        });
     }
 
     /** @test */
