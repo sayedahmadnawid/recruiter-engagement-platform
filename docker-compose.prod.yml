@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app:
     build:
@@ -7,6 +9,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./backend/.env
+    volumes:
+      - storage-data:/var/www/storage
     networks:
       - recruiter-network
 
@@ -19,6 +23,8 @@ services:
     env_file:
       - ./backend/.env
     command: php artisan queue:work --tries=3 --timeout=90
+    volumes:
+      - storage-data:/var/www/storage
     networks:
       - recruiter-network
 
@@ -41,3 +47,6 @@ services:
 
 networks:
   recruiter-network:
+
+volumes:
+  storage-data:
