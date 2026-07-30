@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lead extends Model
 {
@@ -19,10 +21,18 @@ class Lead extends Model
     ];
 
     /**
-     * Get the resume associated with the lead.
+     * Get the resumes associated with the lead.
      */
-    public function resume(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function resume(): HasMany
     {
-        return $this->hasOne(Resume::class);
+        return $this->hasMany(Resume::class);
+    }
+
+    /**
+     * Get the candidate profile associated with the lead.
+     */
+    public function profile(): HasOne
+    {
+        return $this->hasOne(CandidateProfile::class);
     }
 }

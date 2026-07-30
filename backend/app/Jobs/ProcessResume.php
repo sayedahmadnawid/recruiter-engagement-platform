@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Contracts\ResumeParserInterface;
 use App\Models\Resume;
 use App\Services\Resume\ResumeProcessingService;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -9,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use App\Services\CandidateProfileService;
+use App\Services\Resume\ResumeTextExtractor;
 
 class ProcessResume implements ShouldQueue
 {
@@ -22,8 +25,11 @@ class ProcessResume implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(ResumeProcessingService $service): void
-    {
+    public function handle(
+        ResumeTextExtractor $extractor,
+        ResumeParserInterface $parser,
+        CandidateProfileService $profileBuilder
+    ): void {
 
         // Mark as processing
         $this->resume->update(['status' => 'processing']);
@@ -40,13 +46,17 @@ class ProcessResume implements ShouldQueue
                 return; // Stop processing
             }
 
-            $result = $service->process($path);
+            $rawText = $extractor->extract($path);
+
+            $parsedData = $parser->parse($rawText);
 
             $this->resume->update([
-                'extracted_text' => $result['extracted_text'],
-                'parsed_data'    => $result['parsed_data'],
-                'status'         => 'completed',
+                'raw_text' => $rawText,
+                'parsed_data' => $parsedData,
+                'status' => 'completed',
             ]);
+
+            $profileBuilder->buildFromParsedResume($this->resume->lead, $this->resume);
         } catch (\Exception $e) {
             $this->resume->update(['status' => 'failed']);
             // Re-throw to allow Laravel to log the failure in 'failed_jobs'
