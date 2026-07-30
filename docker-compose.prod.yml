@@ -13,6 +13,8 @@ services:
       - storage-data:/var/www/storage
     networks:
       - recruiter-network
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
 
   queue:
     build:
@@ -27,6 +29,8 @@ services:
       - storage-data:/var/www/storage
     networks:
       - recruiter-network
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
 
   nginx:
     image: nginx:alpine
