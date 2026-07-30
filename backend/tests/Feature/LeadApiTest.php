@@ -182,7 +182,7 @@ class LeadApiTest extends TestCase
         ]);
 
         // 7. Verify the file actually saved to our fake storage folder
-        $resume = $lead->resume;
+        $resume = $lead->resume->first();
         $this->assertNotNull($resume);
         Storage::disk('local')->assertExists($resume->file_path);
 
