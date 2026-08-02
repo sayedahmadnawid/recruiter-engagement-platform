@@ -1,10 +1,11 @@
+name: Deploy to AWS
+
 on:
   workflow_dispatch:
   push:
     branches:
       - main
       - feature/github-actions-cicd
-      - feature/resume-ai-parser # <-- Added your active feature branch
 
 jobs:
   test-and-deploy:
@@ -21,7 +22,7 @@ jobs:
       - name: Install Backend Dependencies
         working-directory: backend
         run: composer install --no-interaction
-
+      
       - name: Ensure Storage Directories Exist
         working-directory: backend
         run: |
@@ -49,12 +50,22 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
 
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /path/to/your/app
-            git pull origin main
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up -d --build
-            docker exec recruiter_app php artisan config:clear
-            docker exec recruiter_app php artisan config:cache
-            docker exec recruiter_queue php artisan queue:restart
-          EOF
+          ssh-add private_key.pem
+
+          ssh -o ConnectTimeout=15 -o StrictHostKeyChecking=no \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+              cd /var/www/recruiter-engagement-platform && \
+              git fetch --all && \
+              git reset --hard origin/main && \
+              cd frontend && \
+              npm ci && \
+              npm run build && \
+              cd .. && \
+              docker compose -f docker-compose.prod.yml down && \
+              docker compose -f docker-compose.prod.yml up -d --build && \
+              docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force && \
+              docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache && \
+              docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache && \
+              docker compose -f docker-compose.prod.yml exec -T app php artisan view:cache && \
+              docker exec recruiter_queue php artisan queue:restart
+            "
