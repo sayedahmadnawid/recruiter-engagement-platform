@@ -49,7 +49,7 @@ services:
       - recruiter-network
 
 networks:
-  recruiter-network:a
+  recruiter-network:
 
 volumes:
   storage_data:
