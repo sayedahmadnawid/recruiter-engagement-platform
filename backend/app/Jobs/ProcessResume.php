@@ -17,6 +17,16 @@ class ProcessResume implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+
+    /**
+     * Retry the job up to 5 times before moving to failed_jobs.
+     */
+    public $tries = 5;
+    public function backoff(): array
+    {
+        return [10, 30, 60, 120, 300];
+    }   
+
     /**
      * Create a new job instance.
      */
