@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('resumes', function (Blueprint $table) {
-            $table->id()->first();
+            $table->id();
             // Foreign key linking directly to the parent leads table records
             $table->foreignId('lead_id')->constrained()->onDelete('cascade');
             $table->string('original_name');
