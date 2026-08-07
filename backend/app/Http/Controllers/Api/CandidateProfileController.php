@@ -7,6 +7,7 @@ use App\Http\Resources\CandidateProfileResource;
 use App\Models\CandidateProfile;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Lead;
 
 class CandidateProfileController extends Controller
 {
@@ -16,6 +17,21 @@ class CandidateProfileController extends Controller
     public function index()
     {
         //
+    }
+
+    /**
+     * Display the specified resource by lead.
+     */
+
+    public function showByLead(Lead $lead)
+    {
+        $profile = $lead->candidateProfile;
+
+        if (!$profile) {
+            return response()->json(['message' => 'Candidate profile not found'], 404);
+        }
+
+        return response()->json($profile);
     }
 
     /**

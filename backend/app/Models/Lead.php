@@ -31,7 +31,7 @@ class Lead extends Model
     /**
      * Get the candidate profile associated with the lead.
      */
-    public function profile(): HasOne
+    public function candidateProfile(): HasOne
     {
         return $this->hasOne(CandidateProfile::class);
     }

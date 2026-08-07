@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import LeadForm from "../components/leads/LeadForm";
-import { STATUS_OPTIONS } from "../constants/leads"; // Importing your single source of truth
+import { STATUS_OPTIONS } from "../constants/leads"; 
+import { useNavigate } from 'react-router-dom';
+
 import {
   getLeads,
   createLead,
@@ -19,6 +21,8 @@ export default function LeadsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadLeads();
@@ -62,6 +66,14 @@ export default function LeadsPage() {
     setEditingLead(lead);
   };
 
+  const handleViewLead = async (leadData) => {
+    try {
+      navigate(`/leads/${leadData.id}/profile`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
   const handleUpdateLead = async (leadData) => {
     try {
       await updateLead(editingLead.id, leadData);
@@ -156,6 +168,7 @@ export default function LeadsPage() {
       >
         <LeadTable
           leads={leads}
+          onView={handleViewLead}
           onEdit={handleEditLead}
           onDelete={handleDeleteLead}
           onStatusChange={handleStatusChange}

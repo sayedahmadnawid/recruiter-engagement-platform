@@ -41,12 +41,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dashboard stats endpoint
     Route::get('/dashboard/stats', [LeadController::class, 'dashboard']);
 
+    // Candidate profile endpoints by lead
+    Route::get('leads/{lead}/candidate-profile', [CandidateProfileController::class, 'showByLead']);
+
     // Candidate profile endpoints
     Route::apiResource('candidate-profiles', CandidateProfileController::class);
 });
-
-// Candidate profile endpoints
-    Route::apiResource('candidate-profiles', CandidateProfileController::class);
 
 // Health check endpoint
 Route::get('/health', function () {
