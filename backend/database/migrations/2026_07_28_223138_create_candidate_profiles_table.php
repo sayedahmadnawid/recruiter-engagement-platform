@@ -17,7 +17,7 @@ return new class extends Migration
 
             // Core Identity
             $table->string('full_name')->nullable();
-            $table->string('email')->nullable()->index();
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('current_title')->nullable();
             $table->string('location')->nullable();
