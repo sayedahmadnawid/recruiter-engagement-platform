@@ -13,10 +13,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(
-            ResumeParserInterface::class,
-            GeminiResumeParser::class
-        );
+        $this->app->bind(ResumeParserInterface::class, function () {
+    return match (config('services.ai_provider', 'openai')) {
+        'gemini' => new \App\Services\Parsers\GeminiResumeParser(),
+        'openai' => new \App\Services\Parsers\OpenAiResumeParser(),
+    };
+});
     }
 
     /**
