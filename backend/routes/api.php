@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\RecruiterEventController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CandidateProfileController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,6 +40,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dashboard stats endpoint
     Route::get('/dashboard/stats', [LeadController::class, 'dashboard']);
+
+    // Candidate profile endpoints by lead
+    Route::get('leads/{lead}/candidate-profile', [CandidateProfileController::class, 'showByLead']);
+
+    // Candidate profile endpoints
+    Route::apiResource('candidate-profiles', CandidateProfileController::class);
 });
 
 // Health check endpoint

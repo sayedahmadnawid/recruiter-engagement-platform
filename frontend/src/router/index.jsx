@@ -12,6 +12,7 @@ import AuthenticationPage, {
 } from "../pages/Authentication";
 import { tokenLoader } from "../services/authService";
 import DashboardPage from "../pages/DashboardPage";
+import CandidateProfilePage from "../pages/CandidateProfile";
 
 export const router = createBrowserRouter([
   {
@@ -44,14 +45,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      /* {
-        path: "dashboard",
+      {
+        path: "leads/:leadId/profile",
         element: (
           <ProtectedRoute>
-            <Dashboard />
+            <CandidateProfilePage />
           </ProtectedRoute>
         ),
-      }, */
+      },
       {
         path: "dashboard",
         element: (
