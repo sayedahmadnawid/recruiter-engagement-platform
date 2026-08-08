@@ -1,39 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useActionState } from "react";
 import InputField from "../ui/InputField";
 import SelectField from "../ui/SelectField";
 import FileInput from "../ui/FileInput";
 import { STATUS_OPTIONS } from "../../constants/leads";
 import Button from "../ui/Button";
+import {
+  isEmail,
+  isNotEmpty,
+  hasMinLength,
+  isLinkedInUrl,
+} from "../../util/validation";
 
 export default function LeadForm({ initialData, onSubmit, onCancel }) {
-  const [form, setForm] = useState(
-    initialData || {
-      name: "",
-      email: "",
-      company: "",
-      job_title: "",
-      linkedin_url: "",
-      status: "new",
-      notes: "",
-    },
-  );
+  const emptyForm = {
+    name: "",
+    email: "",
+    company: "",
+    job_title: "",
+    linkedin_url: "",
+    status: "new",
+    notes: "",
+  };
 
+  const [form, setForm] = useState(initialData || emptyForm);
   const [resumeFile, setResumeFile] = useState(null);
-  const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
-    setForm(
-      initialData || {
-        name: "",
-        email: "",
-        company: "",
-        job_title: "",
-        linkedin_url: "",
-        status: "new",
-        notes: "",
-      },
-    );
-
+    setForm(initialData || emptyForm);
     setResumeFile(null);
   }, [initialData]);
 
@@ -44,43 +37,61 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const submitAction = async () => {
+    const errors = [];
 
-    // 1. Pack payload into a Multipart FormData object instead of passing a raw object
-    const formData = new FormData();
-
-    // Append your structured text properties
-    formData.append("name", form.name);
-    formData.append("email", form.email);
-    formData.append("company", form.company || "");
-    formData.append("job_title", form.job_title || "");
-    formData.append("linkedin_url", form.linkedin_url || "");
-    formData.append("status", form.status || "new");
-    formData.append("notes", form.notes || "");
-
-    // 2. Append the binary file object explicitly if selected
-    if (resumeFile && resumeFile instanceof File) {
-      formData.append("resume", resumeFile);
+    if (!isNotEmpty(form.name) || !hasMinLength(form.name, 3)) {
+      errors.push("Name is required.");
+    }
+    if (!isNotEmpty(form.email) || !isEmail(form.email)) {
+      errors.push("Email is required.");
+    }
+    if (!isNotEmpty(form.company)) {
+      errors.push("Company is required.");
+    }
+    if (!isNotEmpty(form.job_title)) {
+      errors.push("Job title is required.");
+    }
+    if (!isNotEmpty(form.linkedin_url) || !isLinkedInUrl(form.linkedin_url)) {
+      errors.push("LinkedIn URL is required.");
+    }
+    if (!isNotEmpty(form.status)) {
+      errors.push("Status is required.");
     }
 
-    // 3. Fire the streaming payload up to your parent coordinator logic
-    onSubmit(formData);
+    if (errors.length > 0) {
+      return { errors };
+    }
 
-    // Reset local component states completely on creations
+    // Pack payload into a Multipart FormData object instead of passing a raw object
+    const payload = new FormData();
+    payload.append("name", form.name);
+    payload.append("email", form.email);
+    payload.append("company", form.company || "");
+    payload.append("job_title", form.job_title || "");
+    payload.append("linkedin_url", form.linkedin_url || "");
+    payload.append("status", form.status || "new");
+    payload.append("notes", form.notes || "");
+
+    if (resumeFile instanceof File) {
+      payload.append("resume", resumeFile);
+    }
+
+    // Fire the streaming payload up to your parent coordinator logic
+    await onSubmit(payload);
+
+    // Reset local component state completely on creation (not on edit)
     if (!initialData) {
-      setForm({
-        name: "",
-        email: "",
-        company: "",
-        job_title: "",
-        linkedin_url: "",
-        status: "new",
-        notes: "",
-      });
+      setForm(emptyForm);
       setResumeFile(null);
     }
+
+    return { errors: null };
   };
+
+  const [formState, formAction, pending] = useActionState(submitAction, {
+    errors: null,
+  });
 
   return (
     <div className="max-w-xl mx-auto bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden p-6 sm:p-8">
@@ -93,7 +104,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form action={formAction} className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <InputField
             label="Full Name"
@@ -102,17 +113,15 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
             placeholder="John Doe"
             value={form.name}
             onChange={handleChange}
-            required
           />
 
           <InputField
             label="Email Address"
             name="email"
-            type="email"
+            type="text"
             placeholder="john@example.com"
             value={form.email}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -121,7 +130,6 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           accept=".pdf,.docx"
           maxSizeMB={4}
           onFileSelect={(file) => setResumeFile(file)}
-          error={validationErrors.resume}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -147,7 +155,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
         <InputField
           label="LinkedIn Profile"
           name="linkedin_url"
-          type="url"
+          type="text"
           placeholder="https://linkedin.com/in/username"
           value={form.linkedin_url}
           onChange={handleChange}
@@ -159,7 +167,6 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           value={form.status}
           onChange={handleChange}
           options={STATUS_OPTIONS}
-          required
         />
 
         <InputField
@@ -172,19 +179,36 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
           rows={3}
         />
 
+        {formState.errors && (
+          <div className="bg-red-100 text-red-700 p-3 rounded-md text-sm">
+            <ul className="list-disc list-inside">
+              {formState.errors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="pt-2 flex flex-col gap-2">
-          <Button type="submit" variant="primary" className="w-full">
-            {initialData ? "Update Lead" : "Add Lead"}
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full"
+            disabled={pending}
+          >
+            {pending ? "Saving..." : initialData ? "Update Lead" : "Add Lead"}
           </Button>
 
           {initialData && (
-            <button
+            <Button
               type="button"
-              className="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+              variant="secondary"
               onClick={onCancel}
+              className="w-full"
+              disabled={pending}
             >
               Cancel
-            </button>
+            </Button>
           )}
         </div>
       </form>
