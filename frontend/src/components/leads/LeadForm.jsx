@@ -3,6 +3,7 @@ import InputField from "../ui/InputField";
 import SelectField from "../ui/SelectField";
 import FileInput from "../ui/FileInput";
 import { STATUS_OPTIONS } from "../../constants/leads";
+import Button from "../ui/Button";
 
 export default function LeadForm({ initialData, onSubmit, onCancel }) {
   const [form, setForm] = useState(
@@ -172,12 +173,9 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
         />
 
         <div className="pt-2 flex flex-col gap-2">
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-          >
+          <Button type="submit" variant="primary" className="w-full">
             {initialData ? "Update Lead" : "Add Lead"}
-          </button>
+          </Button>
 
           {initialData && (
             <button
