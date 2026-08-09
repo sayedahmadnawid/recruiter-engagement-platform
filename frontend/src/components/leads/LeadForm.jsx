@@ -2,6 +2,7 @@ import { useState, useEffect, useActionState } from "react";
 import InputField from "../ui/InputField";
 import SelectField from "../ui/SelectField";
 import FileInput from "../ui/FileInput";
+import { useToast } from "../../context/ToastContext";
 import { STATUS_OPTIONS } from "../../constants/leads";
 import Button from "../ui/Button";
 import {
@@ -24,6 +25,7 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
 
   const [form, setForm] = useState(initialData || emptyForm);
   const [resumeFile, setResumeFile] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     setForm(initialData || emptyForm);
@@ -84,9 +86,16 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
       if (!initialData) {
         setForm(emptyForm);
         setResumeFile(null);
-        return { errors: null };
       }
-      
+
+      showToast(
+        initialData
+          ? "Lead updated successfully!"
+          : "Lead created successfully!",
+        "success",
+      );
+
+      return { errors: null };
     } catch (err) {
       console.error("LeadForm submitAction error:", err.response?.data || err);
       const serverErrors = err.response?.data?.errors;
