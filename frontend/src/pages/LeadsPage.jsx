@@ -59,6 +59,7 @@ export default function LeadsPage() {
       await loadLeads();
     } catch (error) {
       console.error(error);
+      throw error; 
     }
   };
 

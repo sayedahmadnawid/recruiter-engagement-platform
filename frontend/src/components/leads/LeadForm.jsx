@@ -77,16 +77,32 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
       payload.append("resume", resumeFile);
     }
 
-    // Fire the streaming payload up to your parent coordinator logic
-    await onSubmit(payload);
+    try {
+      // Fire the streaming payload up to your parent coordinator logic
+      await onSubmit(payload);
+      // Reset local component state completely on creation (not on edit)
+      if (!initialData) {
+        setForm(emptyForm);
+        setResumeFile(null);
+        return { errors: null };
+      }
+      
+    } catch (err) {
+      console.error("LeadForm submitAction error:", err.response?.data || err);
+      const serverErrors = err.response?.data?.errors;
 
-    // Reset local component state completely on creation (not on edit)
-    if (!initialData) {
-      setForm(emptyForm);
-      setResumeFile(null);
+      if (serverErrors) {
+        return { errors: Object.values(serverErrors).flat() };
+      }
+
+      // Fallback for non-validation errors (network failure, 500, etc.)
+      return {
+        errors: [
+          err.response?.data?.message ||
+            "Failed to save lead. Please try again.",
+        ],
+      };
     }
-
-    return { errors: null };
   };
 
   const [formState, formAction, pending] = useActionState(submitAction, {
@@ -127,7 +143,8 @@ export default function LeadForm({ initialData, onSubmit, onCancel }) {
 
         <FileInput
           label="Attach Resume (Optional)"
-          accept=".pdf,.docx"
+          accept=".pdf,.doc,.docx"
+          name="resume"
           maxSizeMB={4}
           onFileSelect={(file) => setResumeFile(file)}
         />
