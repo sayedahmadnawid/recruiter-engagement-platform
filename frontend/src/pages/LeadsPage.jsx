@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import LeadForm from "../components/leads/LeadForm";
-import { STATUS_OPTIONS } from "../constants/leads"; 
-import { useNavigate } from 'react-router-dom';
-
+import { STATUS_OPTIONS } from "../constants/leads";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 import {
   getLeads,
   createLead,
@@ -15,14 +15,13 @@ import LeadTable from "../components/leads/LeadTable";
 export default function LeadsPage() {
   const [leads, setLeads] = useState([]);
   const [editingLead, setEditingLead] = useState(null);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadLeads();
@@ -59,7 +58,7 @@ export default function LeadsPage() {
       await loadLeads();
     } catch (error) {
       console.error(error);
-      throw error; 
+      throw error;
     }
   };
 
@@ -74,7 +73,7 @@ export default function LeadsPage() {
       console.error(error);
     }
   };
-  
+
   const handleUpdateLead = async (leadData) => {
     try {
       await updateLead(editingLead.id, leadData);
@@ -91,6 +90,7 @@ export default function LeadsPage() {
 
     try {
       await deleteLead(id);
+      showToast("Lead deleted successfully!", "error");
       await loadLeads();
     } catch (error) {
       console.error(error);
