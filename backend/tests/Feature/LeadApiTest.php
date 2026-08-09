@@ -26,10 +26,15 @@ class LeadApiTest extends TestCase
 
     public function test_authenticated_user_can_create_a_lead(): void
     {
+        Storage::fake('local');
+
+        $resumeFile = UploadedFile::fake()->create('resume.pdf', 500, 'application/pdf');
+
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/leads', [
                 'name' => 'Sayed Nawid',
                 'email' => 'sayed@example.com',
+                'resume' => $resumeFile,
                 'company' => 'ABC Corp',
                 'job_title' => 'Software Engineer',
                 'linkedin_url' => 'https://www.linkedin.com/in/sayednawid',
@@ -194,21 +199,29 @@ class LeadApiTest extends TestCase
     /** @test */
     public function test_it_can_create_a_lead_without_a_resume()
     {
-        // 1. Send the payload without the resume key to test the 'nullable' rule
+        Storage::fake('local');
+
+        // Exceeds the 4096KB (4MB) max size rule
+        $resumeFile = UploadedFile::fake()->create('resume.pdf', 5000, 'application/pdf');
+
         $payload = [
             'name'         => 'Sayed Ahmad Nawid',
             'email'        => 'sayed@example.com',
+            'resume'       => $resumeFile,
+            'company'      => 'ABC Corp',
+            'job_title'    => 'Software Engineer',
+            'linkedin_url' => 'https://www.linkedin.com/in/sayednawid',
             'status'       => 'new',
         ];
 
         $response = $this->actingAs($this->user, 'sanctum')
             ->postJson('/api/leads', $payload);
 
-        $response->assertStatus(201);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['resume']);
 
-        $this->assertDatabaseHas('leads', [
-            'name'        => 'Sayed Ahmad Nawid',
-            'email'       => 'sayed@example.com',
+        $this->assertDatabaseMissing('leads', [
+            'email' => 'sayed@example.com',
         ]);
     }
 
