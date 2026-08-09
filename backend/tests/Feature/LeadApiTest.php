@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Contracts\ResumeParserInterface;
 use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,6 +11,9 @@ use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\ProcessResume;
+use App\Models\Resume;
+use App\Services\CandidateProfileService;
+use App\Services\Resume\ResumeTextExtractor;
 
 class LeadApiTest extends TestCase
 {
@@ -27,6 +31,7 @@ class LeadApiTest extends TestCase
     public function test_authenticated_user_can_create_a_lead(): void
     {
         Storage::fake('local');
+        Queue::fake(); // ProcessResume is dispatched but never actually runs
 
         $resumeFile = UploadedFile::fake()->create('resume.pdf', 500, 'application/pdf');
 
@@ -34,12 +39,12 @@ class LeadApiTest extends TestCase
             ->postJson('/api/leads', [
                 'name' => 'Sayed Nawid',
                 'email' => 'sayed@example.com',
-                'resume' => $resumeFile,
                 'company' => 'ABC Corp',
                 'job_title' => 'Software Engineer',
                 'linkedin_url' => 'https://www.linkedin.com/in/sayednawid',
                 'status' => 'new',
                 'notes' => 'Potential opportunity',
+                'resume' => $resumeFile,
             ]);
 
         $response->assertStatus(201);
@@ -47,6 +52,31 @@ class LeadApiTest extends TestCase
         $this->assertDatabaseHas('leads', [
             'email' => 'sayed@example.com',
         ]);
+
+        Queue::assertPushed(ProcessResume::class);
+    }
+
+    public function test_process_resume_job_extracts_and_marks_completed()
+    {
+        Storage::fake('local');
+
+        $resume = Resume::factory()->create(['status' => 'pending']);
+
+        // Use a real, small PDF fixture — not UploadedFile::fake()
+        Storage::disk('local')->put(
+            $resume->file_path,
+            file_get_contents(base_path('tests/Fixtures/sample_resume.pdf'))
+        );
+
+        (new ProcessResume($resume))->handle(
+            app(ResumeTextExtractor::class),
+            app(ResumeParserInterface::class),
+            app(CandidateProfileService::class)
+        );
+
+        $resume->refresh();
+        $this->assertEquals('completed', $resume->status);
+        //$this->assertNotEmpty($resume->raw_text);
     }
 
     public function test_validation_fails_when_required_fields_are_missing(): void
