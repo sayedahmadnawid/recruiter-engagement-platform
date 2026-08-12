@@ -1,118 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LeadForm from "../components/leads/LeadForm";
 import { STATUS_OPTIONS } from "../constants/leads";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "../context/ToastContext";
-import {
-  getLeads,
-  createLead,
-  deleteLead,
-  updateLead,
-  updateLeadStatus,
-} from "../services/leadService";
 import LeadTable from "../components/leads/LeadTable";
+import { useLeads } from "../hooks/useLeads";
 
 export default function LeadsPage() {
-  const [leads, setLeads] = useState([]);
-  const [editingLead, setEditingLead] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [paginationData, setPaginationData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { showToast } = useToast();
 
-  useEffect(() => {
-    loadLeads();
-  }, [searchTerm, statusFilter, currentPage]);
-
-  const loadLeads = async () => {
-    setIsLoading(true);
-    try {
-      const params = {
-        search: searchTerm,
-        status: statusFilter,
-        page: currentPage,
-      };
-
-      const response = await getLeads(params);
-
-      // Laravel paginate metadata maps results to data key
-      setLeads(response.data || []);
-      setPaginationData({
-        currentPage: response.current_page,
-        lastPage: response.last_page,
-        total: response.total,
-      });
-    } catch (error) {
-      console.error("Error loading leads:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCreateLead = async (leadData) => {
-    try {
-      await createLead(leadData);
-      await loadLeads();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  const handleEditLead = (lead) => {
-    setEditingLead(lead);
-  };
-
-  const handleViewLead = async (leadData) => {
-    try {
-      navigate(`/leads/${leadData.id}/profile`);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleUpdateLead = async (leadData) => {
-    try {
-      await updateLead(editingLead.id, leadData);
-      setEditingLead(null);
-      await loadLeads();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDeleteLead = async (id) => {
-    const confirmed = window.confirm("Delete this lead?");
-    if (!confirmed) return;
-
-    try {
-      await deleteLead(id);
-      showToast("Lead deleted successfully!", "error");
-      await loadLeads();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleStatusChange = async (leadId, newStatus) => {
-    const originalLeads = [...leads];
-
-    setLeads((prevLeads) =>
-      prevLeads.map((lead) =>
-        lead.id === leadId ? { ...lead, status: newStatus } : lead,
-      ),
-    );
-
-    try {
-      await updateLeadStatus(leadId, newStatus);
-    } catch (error) {
-      console.error("Status update failed:", error);
-      setLeads(originalLeads);
-    }
-  };
+  const {
+    leads,
+    isLoading,
+    editingLead,
+    setEditingLead,
+    paginationData,
+    handleCreateLead,
+    handleEditLead,
+    handleViewLead,
+    handleUpdateLead,
+    handleDeleteLead,
+    handleStatusChange,
+  } = useLeads({ searchTerm, statusFilter, currentPage });
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
@@ -135,7 +44,7 @@ export default function LeadsPage() {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // Reset page context back to 1
+              setCurrentPage(1); 
             }}
             className="w-full sm:w-64 px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
           />
