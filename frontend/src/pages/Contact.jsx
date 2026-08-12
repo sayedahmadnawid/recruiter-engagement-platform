@@ -1,17 +1,21 @@
 import { useState } from "react";
 import api from "../services/api";
+import InputField from "../components/ui/InputField";
+import Button from "../components/ui/Button";
+import { useToast } from "../context/ToastContext";
 
 export default function Contact() {
-  const [form, setForm] = useState({
+  const emptyForm = {
     name: "",
     email: "",
     company: "",
     message: "",
-  });
+  };
 
+  const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState(null);
+  const { showToast } = useToast();
 
   const handleChange = (e) => {
     setForm({
@@ -23,21 +27,20 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setSuccess(false);
-    setError(null);
+    setErrors(null);
 
     try {
       await api.post("/messages", form);
 
-      setSuccess(true);
-      setForm({
-        name: "",
-        email: "",
-        company: "",
-        message: "",
-      });
+      showToast("Message sent successfully!", "success");
+      setForm(emptyForm);
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      const serverErrors = err.response?.data?.errors;
+      if (serverErrors) {
+        setErrors(Object.values(serverErrors).flat());
+      } else {
+        setErrors([err.response?.data?.message || "Something went wrong"]);
+      }
     } finally {
       setLoading(false);
     }
@@ -52,57 +55,56 @@ export default function Contact() {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
+        <InputField
+          label="Your Name"
           name="name"
+          type="text"
           placeholder="Your Name"
           value={form.name}
           onChange={handleChange}
-          className="w-full border p-3 rounded"
-          required
         />
 
-        <input
-          type="email"
+        <InputField
+          label="Your Email"
           name="email"
+          type="email"
           placeholder="Your Email"
           value={form.email}
           onChange={handleChange}
-          className="w-full border p-3 rounded"
-          required
         />
 
-        <input
-          type="text"
+        <InputField
+          label="Company (optional)"
           name="company"
+          type="text"
           placeholder="Company (optional)"
           value={form.company}
           onChange={handleChange}
-          className="w-full border p-3 rounded"
         />
 
-        <textarea
+        <InputField
+          label="Your Message"
           name="message"
           placeholder="Your Message"
           value={form.message}
           onChange={handleChange}
-          className="w-full border p-3 rounded h-32"
-          required
+          textarea
+          rows={5}
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-black text-white px-6 py-3 rounded"
-        >
-          {loading ? "Sending..." : "Send Message"}
-        </button>
-
-        {success && (
-          <p className="text-green-600">Message sent successfully!</p>
+        {errors && (
+          <div className="bg-red-100 text-red-700 p-3 rounded-md text-sm">
+            <ul className="list-disc list-inside">
+              {errors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </div>
         )}
 
-        {error && <p className="text-red-600">{error}</p>}
+        <Button type="submit" variant="primary" disabled={loading}>
+          {loading ? "Sending..." : "Send Message"}
+        </Button>
       </form>
     </div>
   );
