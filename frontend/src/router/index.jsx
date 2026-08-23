@@ -3,8 +3,8 @@ import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
 import Projects from "../pages/Projects";
 import Contact from "../pages/Contact";
-import Dashboard from "../pages/Dashboard";
-import LeadsPage from "../pages/LeadsPage";
+//import Dashboard from "../pages/Dashboard";
+import LeadsPage from "../features/leads/pages/LeadsPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { action as logoutAction } from "../pages/Logout";
 import AuthenticationPage, {
@@ -12,7 +12,7 @@ import AuthenticationPage, {
 } from "../pages/Authentication";
 import { tokenLoader } from "../services/authService";
 import DashboardPage from "../pages/DashboardPage";
-import CandidateProfilePage from "../pages/CandidateProfile";
+import CandidateProfilePage from "../features/candidateProfiles/pages/CandidateProfilePage";
 
 export const router = createBrowserRouter([
   {

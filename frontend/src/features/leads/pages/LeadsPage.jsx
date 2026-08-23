@@ -1,7 +1,7 @@
 import { useState } from "react";
-import LeadForm from "../components/leads/LeadForm";
-import { STATUS_OPTIONS } from "../constants/leads";
-import LeadTable from "../components/leads/LeadTable";
+import LeadForm from "../components/LeadForm";
+import { STATUS_OPTIONS } from "../../../constants/leads";
+import LeadTable from "../components/LeadTable";
 import { useLeads } from "../hooks/useLeads";
 
 export default function LeadsPage() {

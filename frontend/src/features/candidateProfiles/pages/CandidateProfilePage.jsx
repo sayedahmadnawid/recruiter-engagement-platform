@@ -1,11 +1,11 @@
 
 import { useParams } from 'react-router-dom';
 import { useCandidateProfile } from '../hooks/useCandidateProfile';
-import CandidateHeader from '../components/candidateProfiles/CandidateHeader';
-import CandidateSkills from '../components/candidateProfiles/CandidateSkills';
-import CandidateExperience from '../components/candidateProfiles/CandidateExperiences';
-import CandidateEductions from '../components/candidateProfiles/CandidateEductions';
-import CandidateCertifications from '../components/candidateProfiles/CandidateCertifications';
+import CandidateHeader from '../components/CandidateHeader';
+import CandidateSkills from '../components/CandidateSkills';
+import CandidateExperience from '../components/CandidateExperiences';
+import CandidateEductions from '../components/CandidateEductions';
+import CandidateCertifications from '../components/CandidateCertifications';
 //import Spinner from '../../../components/common/Spinner';
 
 export default function CandidateProfilePage() {

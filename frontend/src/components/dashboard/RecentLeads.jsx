@@ -1,4 +1,4 @@
-import LeadStatusBadge from "../leads/LeadStatusBadge";
+import LeadStatusBadge from "../../features/leads/components/LeadStatusBadge";
 
 export default function RecentLeads({ leads = [] }) {
   return (
