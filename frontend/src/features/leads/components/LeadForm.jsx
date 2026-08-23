@@ -1,16 +1,18 @@
 import { useState, useEffect, useActionState } from "react";
-import InputField from "../ui/InputField";
-import SelectField from "../ui/SelectField";
-import FileInput from "../ui/FileInput";
-import { useToast } from "../../context/ToastContext";
-import { STATUS_OPTIONS } from "../../constants/leads";
-import Button from "../ui/Button";
+import InputField from "../../../components/ui/InputField";
+import SelectField from "../../../components/ui/SelectField";
+import FileInput from "../../../components/ui/FileInput";
+import { useToast } from "../../../context/ToastContext";
+
+import { STATUS_OPTIONS } from "../../../constants/leads";
+import Button from "../../../components/ui/Button";
 import {
   isEmail,
   isNotEmpty,
   hasMinLength,
   isLinkedInUrl,
-} from "../../util/validation";
+} from "../../../util/validation"
+
 
 export default function LeadForm({ initialData, onSubmit, onCancel }) {
   const emptyForm = {

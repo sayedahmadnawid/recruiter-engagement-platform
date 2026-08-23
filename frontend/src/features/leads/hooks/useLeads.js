@@ -8,7 +8,7 @@ import {
   updateLeadStatus,
 } from "../services/leadService";
 
-import { useToast } from "../context/ToastContext";
+import { useToast } from "../../../context/ToastContext";
 
 export function useLeads({ searchTerm, statusFilter, currentPage }) {
   const [leads, setLeads] = useState([]);

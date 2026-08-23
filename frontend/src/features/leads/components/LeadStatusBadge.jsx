@@ -1,5 +1,5 @@
-import SelectField from "../ui/SelectField";
-import { STATUS_OPTIONS } from "../../constants/leads";
+import SelectField from "../../../components/ui/SelectField";
+import { STATUS_OPTIONS } from "../../../constants/leads";
 
 export default function LeadStatusBadge({ status, onStatusChange }) {
   const normalizedStatus = status?.toLowerCase() || "new";

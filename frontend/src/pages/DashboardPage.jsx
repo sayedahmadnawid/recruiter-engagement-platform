@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDashboardStats } from "../services/leadService";
+import { getDashboardStats } from "../features/leads/services/leadService";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import StatusChart from "../components/dashboard/StatusChart";
 import RecentLeads from "../components/dashboard/RecentLeads";
