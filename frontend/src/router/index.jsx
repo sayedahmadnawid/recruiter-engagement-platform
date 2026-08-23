@@ -12,7 +12,7 @@ import AuthenticationPage, {
 } from "../pages/Authentication";
 import { tokenLoader } from "../services/authService";
 import DashboardPage from "../pages/DashboardPage";
-import CandidateProfilePage from "../pages/CandidateProfile";
+import CandidateProfilePage from "../features/candidateProfiles/pages/CandidateProfilePage";
 
 export const router = createBrowserRouter([
   {

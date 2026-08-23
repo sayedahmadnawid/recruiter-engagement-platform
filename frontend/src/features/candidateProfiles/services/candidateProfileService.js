@@ -1,4 +1,4 @@
-import api from "./api";
+import api from "../../../services/api";
 
 export const getCandidateByLeadId = async (leadId) => {
   const response = await api.get(`/leads/${leadId}/candidate-profile`);
