@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\CandidateProfile\CandidateProfileRequest;
 use App\Http\Resources\CandidateProfileResource;
 use App\Models\CandidateProfile;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
 
@@ -55,7 +54,12 @@ class CandidateProfileController extends Controller
      */
     public function update(CandidateProfileRequest $request, CandidateProfile $candidateProfile)
     {
-        //
+        $candidateProfile->update($request->validated());
+
+        return response()->json([
+            'message' => 'Candidate profile updated successfully.',
+            'data' => $candidateProfile->fresh(),
+        ]);
     }
 
     /**
