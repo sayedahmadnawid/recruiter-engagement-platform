@@ -45,7 +45,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('leads/{lead}/candidate-profile', [CandidateProfileController::class, 'showByLead']);
 
     // Candidate profile endpoints
-    Route::apiResource('candidate-profiles', CandidateProfileController::class);
+    Route::apiResource('candidate-profiles', CandidateProfileController::class)
+        ->except(['update']);
+
+    // Candidate profile individual endpoints for update purpose
+    Route::put('/candidate-profiles/{candidateProfile}/basicInfo', [CandidateProfileController::class, 'updateBasicInfo']);
+    Route::put('/candidate-profiles/{candidateProfile}/skills', [CandidateProfileController::class, 'updateSkills']);
+    Route::put('/candidate-profiles/{candidateProfile}/experience', [CandidateProfileController::class, 'updateExperience']);
+    Route::put('/candidate-profiles/{candidateProfile}/education', [CandidateProfileController::class, 'updateEducation']);
+    Route::put('/candidate-profiles/{candidateProfile}/certifications', [CandidateProfileController::class, 'updateCertifications']);
 });
 
 // Health check endpoint
