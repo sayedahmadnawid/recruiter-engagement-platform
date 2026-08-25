@@ -11,6 +11,10 @@ export default function CandidateInfoForm({ candidate, onSave, onCancel }) {
   });
   const [loading, setLoading] = useState(false);
 
+  const handleChange = (field) => (e) => {
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -32,10 +36,8 @@ export default function CandidateInfoForm({ candidate, onSave, onCancel }) {
           label="Full Name"
           name="full_name"
           type="text"
-          value={formData.current_title}
-          onChange={(e) =>
-            setFormData({ ...formData, current_title: e.target.value })
-          }
+          value={formData.full_name}
+          onChange={handleChange("full_name")}
         />
 
         <InputField
@@ -43,9 +45,7 @@ export default function CandidateInfoForm({ candidate, onSave, onCancel }) {
           name="current_title"
           type="text"
           value={formData.current_title}
-          onChange={(e) =>
-            setFormData({ ...formData, current_title: e.target.value })
-          }
+          onChange={handleChange("current_title")}
         />
 
         <InputField
@@ -53,7 +53,7 @@ export default function CandidateInfoForm({ candidate, onSave, onCancel }) {
           name="name"
           type="email"
           value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          onChange={handleChange("email")}
         />
 
         <InputField
@@ -61,7 +61,7 @@ export default function CandidateInfoForm({ candidate, onSave, onCancel }) {
           name="name"
           type="text"
           value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          onChange={handleChange("phone")}
         />
 
         <InputField
@@ -69,9 +69,7 @@ export default function CandidateInfoForm({ candidate, onSave, onCancel }) {
           name="location"
           type="text"
           value={formData.location}
-          onChange={(e) =>
-            setFormData({ ...formData, location: e.target.value })
-          }
+          onChange={handleChange("location")}
         />
       </div>
 

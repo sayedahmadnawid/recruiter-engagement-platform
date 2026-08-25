@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\CandidateProfile\CandidateProfileRequest;
 use App\Http\Requests\CandidateProfile\CandidateBasicInfoRequest;
-use App\Http\Requests\CandidateProfile\CandidateSkillsRequest;
+use App\Http\Requests\CandidateProfile\CandidateSkillRequest;
+use App\Http\Requests\CandidateProfile\CandidateExperienceRequest;
 use App\Http\Resources\CandidateProfileResource;
 use App\Models\CandidateProfile;
 use App\Http\Controllers\Controller;
@@ -66,7 +67,7 @@ class CandidateProfileController extends Controller
     /**
      * Update skills (JSON array of strings).
      */
-    public function updateSkills(CandidateSkillsRequest $request, CandidateProfile $candidateProfile)
+    public function updateSkills(CandidateSkillRequest $request, CandidateProfile $candidateProfile)
     {
         $candidateProfile->update([
             'skills' => $request->validated('skills'),

@@ -1,7 +1,44 @@
-export default function CandidateExperience({ experience = [] }) {
+import { useState } from "react";
+import CandidateExperienceForm from "./forms/CandidateExperienceForm";
+import Button from "../../../components/ui/Button";
+
+export default function CandidateExperience({ experience = [], onSave }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  if (isEditing) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <CandidateExperienceForm
+          experience={experience}
+          fieldErrors={fieldErrors}
+          onSave={async (updated) => {
+            try {
+              setFieldErrors({});
+              await onSave(updated);
+              setIsEditing(false);
+            } catch (err) {
+              if (err.response?.data?.errors) {
+                setFieldErrors(err.response.data.errors);
+              }
+            }
+          }}
+          onCancel={() => setIsEditing(false)}
+        />
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h2 className="text-lg font-bold text-gray-900 mb-6">Work Experience</h2>
+      <div className="flex justify-between items-center m-6">
+        <h2 className="text-lg font-bold text-gray-900">
+          Work Experience {experience.length > 0 && `(${experience.length})`}
+        </h2>
+        <Button variant="secondary" onClick={() => setIsEditing(true)}>
+          Edit
+        </Button>
+      </div>
+
       {experience.length === 0 ? (
         <p className="text-gray-400 text-sm">No experience recorded.</p>
       ) : (

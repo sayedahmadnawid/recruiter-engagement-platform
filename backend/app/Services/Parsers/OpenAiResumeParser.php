@@ -19,7 +19,21 @@ class OpenAiResumeParser implements ResumeParserInterface
 
         $model = config('services.openai.model', 'gpt-4o-mini');
 
+        /**  1# prompt
         $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information from the following raw resume text into strict JSON matching the required schema.\n\nResume Text:\n" . $rawText;
+         */
+
+        // #2 prompt
+        $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information "
+            . "from the following raw resume text into strict JSON matching the required schema.\n\n"
+            . "For each work experience entry:\n"
+            . "- start_date and end_date must be formatted as YYYY-MM (year and month). If only a year is "
+            . "given, use YYYY-01.\n"
+            . "- If the role is current/ongoing (e.g. \"Present\", \"Current\", no end date given), set "
+            . "is_current to true and end_date to null.\n"
+            . "- If dates cannot be determined at all, set start_date and/or end_date to null.\n\n"
+            . "Resume Text:\n" . $rawText;
+
 
         $response = Http::withToken($apiKey)
             ->post('https://api.openai.com/v1/chat/completions', [
@@ -51,10 +65,16 @@ class OpenAiResumeParser implements ResumeParserInterface
                                         'properties' => [
                                             'title'       => ['type' => 'string'],
                                             'company'     => ['type' => 'string'],
-                                            'dates'       => ['type' => ['string', 'null']],
+                                            'location'    => ['type' => ['string', 'null']],
+                                            'start_date'  => ['type' => ['string', 'null']],
+                                            'end_date'    => ['type' => ['string', 'null']],
+                                            'is_current'  => ['type' => 'boolean'],
                                             'description' => ['type' => ['string', 'null']],
                                         ],
-                                        'required' => ['title', 'company', 'dates', 'description'],
+                                        'required' => [
+                                            'title', 'company', 'location',
+                                            'start_date', 'end_date', 'is_current', 'description',
+                                        ],
                                         'additionalProperties' => false,
                                     ],
                                 ],

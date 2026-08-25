@@ -1,20 +1,38 @@
 import { useParams } from "react-router-dom";
 import { useCandidateProfile } from "../hooks/useCandidateProfile";
 import CandidateInfoCard from "../components/CandidateInfoCard";
-import CandidateSkills from "../components/CandidateSkills";
-import CandidateExperience from "../components/CandidateExperiences";
+import CandidateSkillsCard from "../components/CandidateSkillsCard";
+import CandidateExperiencesCard from "../components/CandidateExperiencesCard";
 import CandidateEductions from "../components/CandidateEductions";
 import CandidateCertifications from "../components/CandidateCertifications";
-import { updateCandidateProfile } from "../services/candidateProfileService";
+import {
+  updateCandidateBasicInfo,
+  updateCandidateExperience,
+  updateCandidateSkills,
+} from "../services/candidateProfileService";
+import { useToast } from "../../../context/ToastContext";
 
 export default function CandidateProfilePage() {
   const { leadId } = useParams();
   const { candidate, loading, error, setCandidate } =
     useCandidateProfile(leadId);
+  const { showToast } = useToast();
 
-  const handleUpdate = async (updatedData) => {
-    const response = await updateCandidateProfile(candidate.id, updatedData);
+  const handleBasicInfoUpdate = async (updatedData) => {
+    const response = await updateCandidateBasicInfo(candidate.id, updatedData);
     setCandidate(response?.data ?? response);
+    showToast("Header part updated successfully!", "success");
+  };
+
+  const handleSkillsUpdate = async (updatedSkills) => {
+    const response = await updateCandidateSkills(candidate.id, updatedSkills);
+    setCandidate(response?.data ?? response);
+    showToast("Skill part updated successfully!", "success");
+  };
+  const handleExperiencesUpdate = async (updatedExperiences) => {
+    const response = await updateCandidateExperience(candidate.id, updatedExperiences);
+    setCandidate(response?.data ?? response);
+    showToast("Experiences part updated successfully!", "success");
   };
 
   if (loading) return <div className="p-12 flex justify-center"></div>;
@@ -33,17 +51,23 @@ export default function CandidateProfilePage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-50 min-h-screen">
       <CandidateInfoCard
         candidate={candidate}
-        onSave={handleUpdate}
+        onSave={handleBasicInfoUpdate}
         onViewResume={() => console.log("Resume clicked")}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <CandidateExperience experience={candidate.experience || []} />
+          <CandidateExperiencesCard
+            experience={candidate.experience || []}
+            onSave={handleExperiencesUpdate}
+          />
           <CandidateEductions education={candidate.education || []} />
         </div>
         <div className="space-y-6">
-          <CandidateSkills skills={candidate.skills || []} />
+          <CandidateSkillsCard
+            skills={candidate.skills || []}
+            onSave={handleSkillsUpdate}
+          />
           <CandidateCertifications
             certifications={candidate.certifications || []}
           />

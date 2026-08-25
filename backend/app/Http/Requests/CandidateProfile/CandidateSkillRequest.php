@@ -4,7 +4,7 @@ namespace App\Http\Requests\CandidateProfile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CandidateSkillsRequest extends FormRequest
+class CandidateSkillRequest extends FormRequest
 {
     public function authorize(): bool
     {
