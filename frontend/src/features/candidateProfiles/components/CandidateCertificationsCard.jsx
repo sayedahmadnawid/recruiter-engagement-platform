@@ -1,11 +1,53 @@
-export default function CandidateCertificationsCard({ certifications = [] }) {
+import { useState } from "react";
+import CandidateCertificationsForm from "./forms/CandidateCertificationsForm";
+import Button from "../../../components/ui/Button";
+export default function CandidateCertificationsCard({ certifications = [], onSave }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  if (isEditing) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <CandidateCertificationsForm
+          certifications={certifications}
+          fieldErrors={fieldErrors}
+          onSave={async (updated) => {
+            try {
+              setFieldErrors({});
+              await onSave(updated);
+              setIsEditing(false);
+            } catch (err) {
+              if (err.response?.data?.errors) {
+                setFieldErrors(err.response.data.errors);
+              }
+            }
+          }}
+          onCancel={() => {
+            setFieldErrors({});
+            setIsEditing(false);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <BadgeIcon className="w-5 h-5 text-indigo-600" />
-        <h2 className="text-lg font-bold text-gray-900">
-          Certifications {certifications.length > 0 && `(${certifications.length})`}
-        </h2>
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center gap-2">
+          <BadgeIcon className="w-5 h-5 text-indigo-600" aria-hidden="true" />
+          <h2 className="text-lg font-bold text-gray-900">
+            Certifications
+            {certifications.length > 0 && (
+              <span className="text-gray-500 font-normal">
+                {" "}
+                ({certifications.length})
+              </span>
+            )}
+          </h2>
+        </div>
+        <Button variant="secondary" onClick={() => setIsEditing(true)}>
+          Edit
+        </Button>
       </div>
 
       {certifications.length === 0 ? (
@@ -15,12 +57,21 @@ export default function CandidateCertificationsCard({ certifications = [] }) {
       ) : (
         <ul className="space-y-3">
           {certifications.map((item, idx) => {
-            // Handle both simple string arrays ["AWS Certified...", "..."] 
+            // Handle both simple string arrays ["AWS Certified...", "..."]
             // and structured object arrays [{ name: "...", issuer: "...", year: "..." }]
-            const isString = typeof item === 'string';
-            const name = isString ? item : (item.name || item.title || item.certification_name || 'Certification');
-            const issuer = !isString ? (item.issuer || item.organization || item.authority) : null;
-            const date = !isString ? (item.year || item.date || item.issued_date || item.issue_date) : null;
+            const isString = typeof item === "string";
+            const name = isString
+              ? item
+              : item.name ||
+                item.title ||
+                item.certification_name ||
+                "Certification";
+            const issuer = !isString
+              ? item.issuer || item.organization || item.authority
+              : null;
+            const date = !isString
+              ? item.year || item.date || item.issued_date || item.issue_date
+              : null;
 
             return (
               <li
@@ -53,7 +104,7 @@ export default function CandidateCertificationsCard({ certifications = [] }) {
 }
 
 // Certificate / Badge Icon
-function BadgeIcon({ className = 'w-5 h-5' }) {
+function BadgeIcon({ className = "w-5 h-5" }) {
   return (
     <svg
       className={className}

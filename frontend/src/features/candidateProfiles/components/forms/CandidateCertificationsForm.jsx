@@ -16,7 +16,7 @@ export default function CertificationsForm({
           name: item,
           issuing_organization: "",
           issue_date: "",
-          credential_id: "",
+          credential_id_or_url: "",
         };
       }
       return {
@@ -24,7 +24,11 @@ export default function CertificationsForm({
         issuing_organization:
           item.issuing_organization || item.issuer || item.organization || "",
         issue_date: item.issue_date || item.date || item.year || "",
-        credential_id: item.credential_id || item.license_number || "",
+        credential_id_or_url:
+          item.credential_id_or_url ||
+          item.credential_id ||
+          item.license_number ||
+          "",
       };
     }),
   );
@@ -46,7 +50,7 @@ export default function CertificationsForm({
         name: "",
         issuing_organization: "",
         issue_date: "",
-        credential_id: "",
+        credential_id_or_url: "",
       },
     ]);
   };
@@ -120,7 +124,6 @@ export default function CertificationsForm({
                   placeholder="e.g. AWS Certified Cloud Practitioner"
                   onChange={(e) => handleChange(idx, "name", e.target.value)}
                   error={fieldErrors[`certifications.${idx}.name`]?.[0]}
-                  required
                 />
 
                 <InputField
@@ -154,14 +157,16 @@ export default function CertificationsForm({
 
                 <InputField
                   label="Credential ID / URL"
-                  name="credential_id"
-                  value={item.credential_id}
+                  name="credential_id_or_url"
+                  value={item.credential_id_or_url}
                   placeholder="e.g. AWS-12345678"
                   onChange={(e) =>
-                    handleChange(idx, "credential_id", e.target.value)
+                    handleChange(idx, "credential_id_or_url", e.target.value)
                   }
                   error={
-                    fieldErrors[`certifications.${idx}.credential_id`]?.[0]
+                    fieldErrors[
+                      `certifications.${idx}.credential_id_or_url`
+                    ]?.[0]
                   }
                 />
               </div>
