@@ -3,12 +3,13 @@ import { useCandidateProfile } from "../hooks/useCandidateProfile";
 import CandidateInfoCard from "../components/CandidateInfoCard";
 import CandidateSkillsCard from "../components/CandidateSkillsCard";
 import CandidateExperiencesCard from "../components/CandidateExperiencesCard";
-import CandidateEductions from "../components/CandidateEductions";
+import CandidateEductionsCard from "../components/CandidateEductionsCard";
 import CandidateCertifications from "../components/CandidateCertifications";
 import {
   updateCandidateBasicInfo,
-  updateCandidateExperience,
   updateCandidateSkills,
+  updateCandidateExperience,
+  updateCandidateEducation
 } from "../services/candidateProfileService";
 import { useToast } from "../../../context/ToastContext";
 
@@ -29,8 +30,15 @@ export default function CandidateProfilePage() {
     setCandidate(response?.data ?? response);
     showToast("Skill part updated successfully!", "success");
   };
+
   const handleExperiencesUpdate = async (updatedExperiences) => {
     const response = await updateCandidateExperience(candidate.id, updatedExperiences);
+    setCandidate(response?.data ?? response);
+    showToast("Experiences part updated successfully!", "success");
+  };
+
+  const handleEducationsUpdate = async (updatedEducations) => {
+    const response = await updateCandidateEducation(candidate.id, updatedEducations);
     setCandidate(response?.data ?? response);
     showToast("Experiences part updated successfully!", "success");
   };
@@ -61,7 +69,10 @@ export default function CandidateProfilePage() {
             experience={candidate.experience || []}
             onSave={handleExperiencesUpdate}
           />
-          <CandidateEductions education={candidate.education || []} />
+          <CandidateEductionsCard 
+          education={candidate.education || []}
+          onSave={handleEducationsUpdate}
+           />
         </div>
         <div className="space-y-6">
           <CandidateSkillsCard

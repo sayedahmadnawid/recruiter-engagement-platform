@@ -6,6 +6,7 @@ use App\Http\Requests\CandidateProfile\CandidateProfileRequest;
 use App\Http\Requests\CandidateProfile\CandidateBasicInfoRequest;
 use App\Http\Requests\CandidateProfile\CandidateSkillRequest;
 use App\Http\Requests\CandidateProfile\CandidateExperienceRequest;
+use App\Http\Requests\CandidateProfile\CandidateEducationRequest;
 use App\Http\Resources\CandidateProfileResource;
 use App\Models\CandidateProfile;
 use App\Http\Controllers\Controller;

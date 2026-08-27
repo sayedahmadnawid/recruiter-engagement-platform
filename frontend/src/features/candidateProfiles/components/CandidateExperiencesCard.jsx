@@ -23,7 +23,10 @@ export default function CandidateExperience({ experience = [], onSave }) {
               }
             }
           }}
-          onCancel={() => setIsEditing(false)}
+          onCancel={() => {
+            setFieldErrors({});
+            setIsEditing(false);
+          }}
         />
       </div>
     );

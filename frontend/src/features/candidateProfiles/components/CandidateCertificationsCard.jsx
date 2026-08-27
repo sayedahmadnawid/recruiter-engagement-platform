@@ -1,4 +1,4 @@
-export default function CandidateCertifications({ certifications = [] }) {
+export default function CandidateCertificationsCard({ certifications = [] }) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex items-center gap-2 mb-4">
