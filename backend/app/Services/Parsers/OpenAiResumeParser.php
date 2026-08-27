@@ -19,7 +19,70 @@ class OpenAiResumeParser implements ResumeParserInterface
 
         $model = config('services.openai.model', 'gpt-4o-mini');
 
-        $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information from the following raw resume text into strict JSON matching the required schema.\n\nResume Text:\n" . $rawText;
+        /**  1# prompt
+        $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information from the following 
+        raw resume text into strict JSON matching the required schema.\n\nResume Text:\n" . $rawText;
+         */
+
+        /**  #2 prompt
+        $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information "
+            . "from the following raw resume text into strict JSON matching the required schema.\n\n"
+            . "For each work experience entry:\n"
+            . "- start_date and end_date must be formatted as YYYY-MM (year and month). If only a year is "
+            . "given, use YYYY-01.\n"
+            . "- If the role is current/ongoing (e.g. \"Present\", \"Current\", no end date given), set "
+            . "is_current to true and end_date to null.\n"
+            . "- If dates cannot be determined at all, set start_date and/or end_date to null.\n\n"
+            . "Resume Text:\n" . $rawText;
+         */
+        /**  3# prompt
+        $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information "
+            . "from the following raw resume text into strict JSON matching the required schema.\n\n"
+            . "For each work experience entry:\n"
+            . "- start_date and end_date must be formatted as YYYY-MM (year and month). If only a year is "
+            . "given, use YYYY-01.\n"
+            . "- If the role is current/ongoing (e.g. \"Present\", \"Current\", no end date given), set "
+            . "is_current to true and end_date to null.\n"
+            . "- If dates cannot be determined at all, set start_date and/or end_date to null.\n\n"
+            . "For each education entry:\n"
+            . "- degree and institution are required. If either is missing or cannot be determined, do not "
+            . "include that education entry.\n"
+            . "- field is the area of study (e.g. \"Computer Science\", \"Business Administration\"). If not "
+            . "stated, set it to null.\n"
+            . "- start_date and end_date must be formatted as YYYY-MM (year and month). If only a year is "
+            . "given, use YYYY-01. If a date cannot be determined, set it to null.\n"
+            . "- If the education is current/ongoing (e.g. \"Present\", \"Expected 2026\"), set end_date to "
+            . "null.\n\n"
+            . "Resume Text:\n" . $rawText;
+         */
+
+        // #4 prompt
+        $prompt = "You are an expert HR applicant tracking system parser. Extract candidate information "
+            . "from the following raw resume text into strict JSON matching the required schema.\n\n"
+            . "For each work experience entry:\n"
+            . "- start_date and end_date must be formatted as YYYY-MM (year and month). If only a year is "
+            . "given, use YYYY-01.\n"
+            . "- If the role is current/ongoing (e.g. \"Present\", \"Current\", no end date given), set "
+            . "is_current to true and end_date to null.\n"
+            . "- If dates cannot be determined at all, set start_date and/or end_date to null.\n\n"
+            . "For each education entry:\n"
+            . "- degree and institution are required. If either is missing or cannot be determined, do not "
+            . "include that education entry.\n"
+            . "- field is the area of study (e.g. \"Computer Science\", \"Business Administration\"). If not "
+            . "stated, set it to null.\n"
+            . "- start_date and end_date must be formatted as YYYY-MM (year and month). If only a year is "
+            . "given, use YYYY-01. If a date cannot be determined, set it to null.\n"
+            . "- If the education is current/ongoing (e.g. \"Present\", \"Expected 2026\"), set end_date to "
+            . "null.\n\n"
+            . "For each certification entry:\n"
+            . "- name is required. If a certification's name cannot be determined, do not include that entry.\n"
+            . "- issuing_organization is the organization or body that issued the certification (e.g. "
+            . "\"Amazon Web Services\", \"PMI\"). If not stated, set it to null.\n"
+            . "- issue_date must be formatted as YYYY-MM. If only a year is given, use YYYY-01. If not "
+            . "stated or cannot be determined, set it to null.\n"
+            . "- credential_id_or_url is the credential ID number or verification URL, if listed. If "
+            . "neither is present, set it to null.\n\n"
+            . "Resume Text:\n" . $rawText;
 
         $response = Http::withToken($apiKey)
             ->post('https://api.openai.com/v1/chat/completions', [
@@ -51,10 +114,21 @@ class OpenAiResumeParser implements ResumeParserInterface
                                         'properties' => [
                                             'title'       => ['type' => 'string'],
                                             'company'     => ['type' => 'string'],
-                                            'dates'       => ['type' => ['string', 'null']],
+                                            'location'    => ['type' => ['string', 'null']],
+                                            'start_date'  => ['type' => ['string', 'null']],
+                                            'end_date'    => ['type' => ['string', 'null']],
+                                            'is_current'  => ['type' => 'boolean'],
                                             'description' => ['type' => ['string', 'null']],
                                         ],
-                                        'required' => ['title', 'company', 'dates', 'description'],
+                                        'required' => [
+                                            'title',
+                                            'company',
+                                            'location',
+                                            'start_date',
+                                            'end_date',
+                                            'is_current',
+                                            'description',
+                                        ],
                                         'additionalProperties' => false,
                                     ],
                                 ],
@@ -65,20 +139,39 @@ class OpenAiResumeParser implements ResumeParserInterface
                                         'properties' => [
                                             'degree'      => ['type' => 'string'],
                                             'institution' => ['type' => 'string'],
-                                            'year'        => ['type' => ['string', 'null']],
+                                            'field'       => ['type' => ['string', 'null']],
+                                            'start_date'  => ['type' => ['string', 'null']],
+                                            'end_date'    => ['type' => ['string', 'null']],
                                         ],
-                                        'required' => ['degree', 'institution', 'year'],
+                                        'required' => ['degree', 'institution', 'field', 'start_date', 'end_date'],
                                         'additionalProperties' => false,
                                     ],
                                 ],
                                 'certifications' => [
                                     'type' => 'array',
-                                    'items' => ['type' => 'string'],
+                                    'items' => [
+                                        'type' => 'object',
+                                        'properties' => [
+                                            'name'               => ['type' => 'string'],
+                                            'issuing_organization' => ['type' => ['string', 'null']],
+                                            'issue_date'         => ['type' => ['string', 'null']],
+                                            'credential_id_or_url' => ['type' => ['string', 'null']],
+                                        ],
+                                        'required' => ['name', 'issuing_organization', 'issue_date', 'credential_id_or_url'],
+                                        'additionalProperties' => false,
+                                    ],
                                 ],
                             ],
                             'required' => [
-                                'full_name', 'email', 'phone', 'current_title', 'location',
-                                'skills', 'experience', 'education', 'certifications',
+                                'full_name',
+                                'email',
+                                'phone',
+                                'current_title',
+                                'location',
+                                'skills',
+                                'experience',
+                                'education',
+                                'certifications',
                             ],
                             'additionalProperties' => false,
                         ],

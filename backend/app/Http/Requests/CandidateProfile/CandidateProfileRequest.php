@@ -14,7 +14,7 @@ class CandidateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lead_id' => ['required', 'exists:leads,id'],
+            //'lead_id' => ['required', 'exists:leads,id'],
             'full_name' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],

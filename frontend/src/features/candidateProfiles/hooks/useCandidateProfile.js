@@ -49,5 +49,5 @@ export const useCandidateProfile = (leadId) => {
     }
   };
 
-  return { candidate, loading, error, refetch: fetchProfile };
+  return { candidate, loading, error, refetch: fetchProfile, setCandidate };
 };
