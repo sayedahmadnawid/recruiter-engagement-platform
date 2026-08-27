@@ -1,73 +1,87 @@
 import { Link } from "react-router-dom";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="mt-6 border-t border-gray-100 bg-gradient-to-b from-white to-gray-50">
+    <footer className="mt-16 border-t border-slate-200 bg-white/80 backdrop-blur-md">
       <div className="max-w-4xl mx-auto px-6 py-10">
         {/* Top section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          {/* Left */}
+          {/* Left - Identity */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
               Sayed Ahmad Nawid
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Full Stack Developer • Laravel • React • AWS
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+              Full Stack Software Engineer • Laravel • React • AWS
             </p>
           </div>
 
-          {/* Right - links */}
-          <div className="flex flex-wrap gap-4 text-sm">
+          {/* Right - Internal Navigation Links */}
+          <nav aria-label="Footer navigation" className="flex flex-wrap gap-6 text-sm font-medium">
             <Link
               to="/"
-              className="text-gray-600 hover:text-indigo-600 transition"
+              className="text-slate-600 hover:text-indigo-600 transition-colors"
             >
               Home
             </Link>
             <Link
-              to="projects"
-              className="text-gray-600 hover:text-indigo-600 transition"
+              to="/projects"
+              className="text-slate-600 hover:text-indigo-600 transition-colors"
             >
               Projects
             </Link>
             <Link
-              to="contact"
-              className="text-gray-600 hover:text-indigo-600 transition"
+              to="/contact"
+              className="text-slate-600 hover:text-indigo-600 transition-colors"
             >
-              Contacts
+              Contact
             </Link>
             <Link
               to="/dashboard"
-              className="text-gray-600 hover:text-indigo-600 transition"
+              className="text-slate-600 hover:text-indigo-600 transition-colors"
             >
               Dashboard
             </Link>
-          </div>
+          </nav>
         </div>
 
         {/* Divider */}
-        <div className="my-6 h-px bg-gray-200"></div>
+        <div className="my-6 h-px bg-slate-200/80"></div>
 
         {/* Bottom section */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <p className="text-sm text-gray-500">
-            © 2026 Sayed Ahmad Nawid. All rights reserved.
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-xs sm:text-sm text-slate-500">
+            © {currentYear} Sayed Ahmad Nawid. All rights reserved.
           </p>
 
-          <div className="flex gap-4 text-sm">
+          {/* Social Links with Icons */}
+          <div className="flex items-center gap-5 text-sm font-medium">
             <a
               href="https://github.com/sayedahmadnawid/recruiter-engagement-platform"
               target="_blank"
-              className="text-gray-500 hover:text-gray-900 transition"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors"
+              aria-label="GitHub Profile"
             >
-              GitHub
+              <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
+              <span>GitHub</span>
             </a>
+
             <a
               href="https://www.linkedin.com/in/sayednawid/"
               target="_blank"
-              className="text-gray-500 hover:text-gray-900 transition"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-slate-600 hover:text-indigo-600 transition-colors"
+              aria-label="LinkedIn Profile"
             >
-              LinkedIn
+              <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+              <span>LinkedIn</span>
             </a>
           </div>
         </div>
