@@ -39,10 +39,14 @@ return [
         'api_key' => env('GEMINI_API_KEY'),
         'model' => env('GEMINI_MODEL', 'gemini-1.5-flash'),
     ],
-    
+    'pinecone' => [
+        'api_key' => env('PINECONE_API_KEY'),
+        'host' => env('PINECONE_INDEX_HOST'),
+    ],
     'openai' => [
-    'api_key' => env('OPENAI_API_KEY'),
-    'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
-],
+        'api_key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'embedding_model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
+    ],
 
 ];

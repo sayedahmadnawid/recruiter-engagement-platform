@@ -12,7 +12,10 @@ use App\Http\Resources\CandidateProfileResource;
 use App\Models\CandidateProfile;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
-
+use App\Services\Vector\PineconeService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class CandidateProfileController extends Controller
 {
@@ -146,5 +149,32 @@ class CandidateProfileController extends Controller
     public function destroy(CandidateProfile $candidateProfile)
     {
         //
+    }
+
+    public function search(Request $request, PineconeService $pinecone): JsonResponse
+    {
+        $request->validate(['query' => 'required|string']);
+
+        // 1. Embed search query
+        $response = Http::withToken(config('services.openai.secret'))
+            ->post('https://api.openai.com/v1/embeddings', [
+                'model' => 'text-embedding-3-small',
+                'input' => $request->input('query'),
+            ]);
+
+        $queryVector = $response->json('data.0.embedding');
+
+        // 2. Search Pinecone for top matching vector IDs
+        $matches = $pinecone->query($queryVector, topK: 5);
+
+        $candidateIds = collect($matches)->pluck('id')->all();
+
+        // 3. Fetch actual candidate data from MySQL
+        $candidates = CandidateProfile::whereIn('id', $candidateIds)->get();
+
+        return response()->json([
+            'query' => $request->input('query'),
+            'results' => $candidates,
+        ]);
     }
 }
