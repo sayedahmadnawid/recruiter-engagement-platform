@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use App\Services\CandidateProfileService;
 use App\Services\Resume\ResumeTextExtractor;
+use Illuminate\Support\Facades\Log;
 
 class ProcessResume implements ShouldQueue
 {
@@ -51,7 +52,7 @@ class ProcessResume implements ShouldQueue
                 $this->resume->update(['status' => 'failed']);
 
                 // Log the error for debugging
-                \Log::error("Resume file not found at: {$path} for Resume ID: {$this->resume->id}");
+                Log::error("Resume file not found at: {$path} for Resume ID: {$this->resume->id}");
 
                 return; // Stop processing
             }
