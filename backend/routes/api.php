@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\RecruiterEventController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\AuthController;
@@ -54,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/candidate-profiles/{candidateProfile}/experience', [CandidateProfileController::class, 'updateExperience']);
     Route::put('/candidate-profiles/{candidateProfile}/education', [CandidateProfileController::class, 'updateEducation']);
     Route::put('/candidate-profiles/{candidateProfile}/certifications', [CandidateProfileController::class, 'updateCertifications']);
+    Route::post('/candidates/search', [CandidateProfileController::class, 'search']);
 });
 
 // Health check endpoint

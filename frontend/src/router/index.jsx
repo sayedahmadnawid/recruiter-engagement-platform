@@ -13,6 +13,7 @@ import AuthenticationPage, {
 import { tokenLoader } from "../services/authService";
 import DashboardPage from "../pages/DashboardPage";
 import CandidateProfilePage from "../features/candidateProfiles/pages/CandidateProfilePage";
+import RagSearchPage from "../features/candidateProfiles/pages/RagSearchPage";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CandidateProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "rag-search",
+        element: (
+          <ProtectedRoute>
+            <RagSearchPage />
           </ProtectedRoute>
         ),
       },

@@ -40,6 +40,9 @@ export default function Navbar() {
                 <NavLink to="/leads" className={navClass}>
                   Leads
                 </NavLink>
+                <NavLink to="/rag-search" className={navClass}>
+                  RAG Search
+                </NavLink>
                 <NavLink to="/dashboard" className={navClass}>
                   Dashboard
                 </NavLink>
