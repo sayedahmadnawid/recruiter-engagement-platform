@@ -34,3 +34,8 @@ export const updateCandidateCertifications = async (id, data) => {
   const response = await api.put(`/candidate-profiles/${id}/certifications`, data);
   return response.data;
 };
+
+export const searchCandidateById = async (query) => {
+  const { data } = await api.post("/candidates/search", { query });
+  return data.results;
+};

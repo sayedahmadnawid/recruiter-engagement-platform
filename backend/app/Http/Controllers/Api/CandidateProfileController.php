@@ -16,9 +16,14 @@ use App\Services\Vector\PineconeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Services\CandidateProfileService;
+use Illuminate\Support\Facades\Log;
 
 class CandidateProfileController extends Controller
 {
+
+    public function __construct(protected CandidateProfileService $searchService,) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -151,30 +156,35 @@ class CandidateProfileController extends Controller
         //
     }
 
-    public function search(Request $request, PineconeService $pinecone): JsonResponse
+    /**
+     * Search candidate profiles using a query string.
+     */
+    public function search(Request $request)
     {
-        $request->validate(['query' => 'required|string']);
+        $validated = $request->validate([
+            'query' => ['required', 'string', 'min:3', 'max:500'],
+        ]);
 
-        // 1. Embed search query
-        $response = Http::withToken(config('services.openai.secret'))
-            ->post('https://api.openai.com/v1/embeddings', [
-                'model' => 'text-embedding-3-small',
-                'input' => $request->input('query'),
-            ]);
+        try {
+            $results = $this->searchService->search($validated['query']);
+        } catch (\Throwable $e) {
+            Log::error('Candidate search failed', ['error' => $e->getMessage()]);
 
-        $queryVector = $response->json('data.0.embedding');
-
-        // 2. Search Pinecone for top matching vector IDs
-        $matches = $pinecone->query($queryVector, topK: 5);
-
-        $candidateIds = collect($matches)->pluck('id')->all();
-
-        // 3. Fetch actual candidate data from MySQL
-        $candidates = CandidateProfile::whereIn('id', $candidateIds)->get();
-
+            return response()->json([
+                'message' => 'Search failed. Please try again.',
+            ], 500);
+        }
         return response()->json([
-            'query' => $request->input('query'),
-            'results' => $candidates,
+            'query' => $validated['query'],
+            'results' => $results->map(fn($r) => [
+                'id' => $r['profile']->id,
+                'full_name' => $r['profile']->full_name,
+                'current_title' => $r['profile']->current_title,
+                'location' => $r['profile']->location,
+                'skills' => $r['profile']->skills,
+                'score' => round($r['score'], 4),
+                'lead_id' => $r['profile']->lead_id,
+            ]),
         ]);
     }
 }

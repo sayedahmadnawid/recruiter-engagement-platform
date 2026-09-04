@@ -3,6 +3,8 @@ import LeadForm from "../components/LeadForm";
 import { STATUS_OPTIONS } from "../../../constants/leads";
 import LeadTable from "../components/LeadTable";
 import { useLeads } from "../hooks/useLeads";
+import { FileText, Sparkles, Database, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function LeadsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,12 +27,64 @@ export default function LeadsPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      {/* Form Area */}
-      <LeadForm
-        initialData={editingLead}
-        onSubmit={editingLead ? handleUpdateLead : handleCreateLead}
-        onCancel={() => setEditingLead(null)}
-      />
+      <div className="grid md:grid-cols-5 gap-8 items-start">
+        {/* Left: explanation */}
+        <div className="md:col-span-2 space-y-6">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-1">
+              What happens after you upload
+            </h2>
+            <p className="text-sm text-gray-600">
+              Your resume is automatically processed in the background — no
+              manual data entry required.
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            <PipelineStep
+              icon={FileText}
+              title="Text is extracted"
+              description="The uploaded resume is queued and parsed to pull out raw text content."
+            />
+            <PipelineStep
+              icon={Sparkles}
+              title="Fields are structured"
+              description="AI identifies name, title, skills, experience, and education from the raw text."
+            />
+            <PipelineStep
+              icon={Database}
+              title="Profile is stored"
+              description="The structured data is saved as a candidate profile linked to this lead."
+            />
+            <PipelineStep
+              icon={Search}
+              title="Made searchable"
+              description={
+                <>
+                  A vector embedding is generated so this candidate can be found
+                  by{" "}
+                  <Link
+                    to="/rag-search"
+                    className="text-indigo-600 hover:text-indigo-700 underline underline-offset-2"
+                  >
+                    semantic search
+                  </Link>
+                  .
+                </>
+              }
+            />
+          </div>
+        </div>
+
+        {/* Right: form */}
+        <div className="md:col-span-3">
+          <LeadForm
+            initialData={editingLead}
+            onSubmit={editingLead ? handleUpdateLead : handleCreateLead}
+            onCancel={() => setEditingLead(null)}
+          />
+        </div>
+      </div>
 
       {/* Control Panel: Search & Filtering Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm mt-8">
@@ -44,7 +98,7 @@ export default function LeadsPage() {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); 
+              setCurrentPage(1);
             }}
             className="w-full sm:w-64 px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
           />
@@ -111,6 +165,19 @@ export default function LeadsPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+function PipelineStep({ icon: Icon, title, description }) {
+  return (
+    <div className="flex gap-3">
+      <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 h-fit shrink-0">
+        <Icon className="w-4 h-4" />
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-gray-900">{title}</p>
+        <p className="text-sm text-gray-500 mt-0.5">{description}</p>
+      </div>
     </div>
   );
 }
