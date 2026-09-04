@@ -1,223 +1,483 @@
+# RecruitSignal — AI-Powered Recruiter Engagement Platform
 
-# Recruiter Engagement Platform (RecruitSignal)
+RecruitSignal is a full-stack, cloud-native recruiting platform built with **Laravel, React, Docker, and AWS**.
 
-RecruitSignal is a full-stack, cloud-native application designed to demonstrate modern software engineering practices using **Laravel**, **React**, and **AWS**.
+The project started as a recruiter engagement platform and has evolved into an **AI-powered candidate management and semantic search system**. RecruitSignal uses AI to extract structured information from candidate resumes and **Pinecone vector search** to enable recruiters to discover candidates using natural-language queries based on the meaning and context of their experience.
 
-## 🎯 Project Goals
-The goal of this project is not only to build a functional application, but to showcase how a production-like system is designed, developed, and evolved using industry-standard architecture principles such as event-driven design, modular backend services, and cloud infrastructure automation.
-
-## 🚀 Ongoing Evolution & Serverless Architecture
-In my spare time, I am constantly evolving the platform by architecting and deploying new features to expand its capabilities. A major focus of this ongoing development is the integration of AWS Lambda functions to transform the system into a highly responsive, event-driven application. 
-
-By decoupling intensive backend tasks—such as processing candidate data pipeline events, handling real-time notifications, and managing asynchronous background queues—into serverless functions, I am actively demonstrating how the application can dynamically scale on-demand while maintaining a lean, highly efficient cloud infrastructure footprint.
+The project is continuously evolving to demonstrate production-oriented software engineering, AI integration, cloud deployment, asynchronous processing, and modern application architecture.
 
 ---
 
 ## 🌐 Live Demo
-Production URL:
+
+**Production:**
 https://recruitsignal.app
 
-RecruitSignal is a recruiter engagement platform that helps organizations collect, manage, and process candidate inquiries through a modern web application built with Laravel, React, Docker, and AWS.
+---
+
+## 🎯 Project Goals
+
+RecruitSignal is a personal engineering project designed to demonstrate how a modern recruiting platform can be designed, developed, deployed, and continuously evolved.
+
+The primary goals are to demonstrate:
+
+* Full-stack development using Laravel and React
+* RESTful API design
+* Relational database modeling
+* AI-powered resume processing
+* Structured candidate data extraction
+* Semantic search using vector embeddings
+* Pinecone vector database integration
+* Asynchronous processing with Laravel queues
+* Dockerized development and production environments
+* AWS cloud deployment
+* CI/CD automation with GitHub Actions
+* Production-oriented architecture and engineering practices
+
+The project is intended as a practical demonstration of full-stack, cloud, and AI engineering capabilities.
 
 ---
 
-## Purpose of the Project
+# 🚀 Current Capabilities
 
-This project is built as a personal engineering portfolio to demonstrate:
+RecruitSignal currently provides a complete candidate ingestion and search workflow.
 
-* Full-stack development skills (Laravel + React)
-* RESTful API design and backend architecture
-* Event-driven system design using queues and background jobs
-* Database modeling and relational design
-* Cloud deployment using AWS services
-* Infrastructure-as-Code (CloudFormation)
-* Professional Git workflow and documentation practices
+### Lead Management
 
-The target audience includes recruiters, hiring managers, and engineering teams evaluating real-world development capability.
+Recruiters can:
 
----
+* Create and manage leads
+* View lead information
+* Edit and delete leads
+* Search and filter leads
+* Paginate lead results
+* Manage lead status
 
-## Core Idea
+### Resume Management
 
-RecruitSignal simulates a recruiter engagement system where:
+Recruiters can:
 
-* Recruiters can discover a developer profile and portfolio
-* Recruiters can subscribe to updates
-* System events are triggered when changes occur (new project, resume update, deployment)
-* Notifications are sent asynchronously to subscribed recruiters
+* Upload candidate resumes
+* Associate resumes with leads
+* Extract text from uploaded PDF resumes
+* Process resumes asynchronously
 
-This creates a real-world event-driven communication system between application changes and external users.
+### AI Resume Parsing
 
----
+Uploaded resumes are processed using OpenAI to extract structured candidate information.
 
-## System Evolution
+The extracted information can include:
 
-This project will be developed in structured phases to simulate real-world software delivery:
+* Candidate name
+* Email
+* Phone
+* Current title
+* Location
+* Skills
+* Professional experience
+* Education
+* Certifications
 
-### Phase 1: Foundation
+The structured information is stored in the application's relational database and presented through the candidate profile interface.
 
-* Project structure setup
-* Documentation (architecture, API, database design)
-* Laravel backend initialization
-* Database schema design
+### Candidate Profiles
 
-### Phase 2: Core Backend
+RecruitSignal provides dedicated candidate profiles containing structured information extracted from resumes.
 
-* Recruiter management API
-* Project management API
-* Subscription system
-* Basic authentication layer
+Recruiters can:
 
-### Phase 3: Event-Driven System
+* View candidate profiles
+* Edit extracted candidate information
+* Review skills and experience
+* Review education and certifications
+* Access the associated resume
 
-* Laravel event system implementation
-* Queue workers setup
-* Notification service
-* Email delivery integration (AWS SES)
+### Semantic Candidate Search
 
-### Phase 4: Frontend Development
+RecruitSignal now supports **semantic candidate search using Pinecone**.
 
-* React-based UI
-* Recruiter dashboard
-* Project showcase interface
-* Subscription UI
+Instead of relying exclusively on keyword matching, recruiters can search candidates using natural-language queries such as:
 
-### Phase 5: Cloud Infrastructure
+> "Find experienced Laravel developers with React and AWS experience."
 
-* AWS EC2 deployment
-* CI/CD pipeline setup
-* CloudFormation infrastructure provisioning
-* Production environment configuration
+The system converts candidate information and search queries into vector representations and uses Pinecone to retrieve semantically relevant candidate information.
 
-### Phase 6: Optimization & Scaling
-
-* Logging and monitoring
-* Performance optimization
-* Error handling improvements
-* Scalability improvements using AWS services
+This allows the search system to identify candidates based on the **meaning and context of their experience**, rather than requiring an exact keyword match.
 
 ---
 
-## Development Philosophy
+# 🧠 AI & Semantic Search Architecture
 
-This project follows a professional engineering approach:
+The candidate processing pipeline currently follows this architecture:
 
-* Incremental development with clear commits
-* Documentation-first design
-* Separation of concerns between frontend, backend, and infrastructure
-* Event-driven architecture for scalability
-* Production-like deployment practices
+```text
+                Resume PDF
+                    │
+                    ▼
+             Text Extraction
+                    │
+                    ▼
+              OpenAI Parsing
+                    │
+                    ▼
+        Structured Candidate Data
+                    │
+                    ├───────────────┐
+                    ▼               ▼
+            Candidate Profile    Embedding
+                    │               │
+                    │               ▼
+                    │          Pinecone
+                    │        Vector Index
+                    │
+                    ▼
+             Candidate Database
+```
 
-Each commit is intended to represent a meaningful step in system evolution, not just code changes.
+For semantic search:
+
+```text
+        Recruiter Query
+              │
+              ▼
+        Query Embedding
+              │
+              ▼
+          Pinecone
+              │
+              ▼
+     Relevant Candidates
+              │
+              ▼
+       Candidate Profiles
+```
+
+The architecture is designed to evolve toward a complete **RAG-based recruiter search and candidate matching system**.
 
 ---
 
-## Architecture Diagram
-<p align="center">
-<pre>
+# 🔎 Semantic Search
 
-                    ┌─────────────┐
-                    │   End User  │
-                    └──────┬──────┘
-                           │ HTTPS
-                           ▼
-                 ┌────────────────────┐
-                 │ recruitsignal.app  │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │  Nginx (Docker)    │
-                 │ Reverse Proxy      │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Laravel API        │
-                 │ PHP 8.4            │
-                 │ Docker Container   │
-                 └─────────┬──────────┘
-                           │
-                           ▼
-                 ┌────────────────────┐
-                 │ Amazon RDS MySQL   │
-                 │ Managed Database   │
-                 └────────────────────┘
+The semantic search capability is one of the major architectural evolutions of RecruitSignal.
 
-                 ┌────────────────────┐
-                 │ Queue Worker       │
-                 │ Laravel Queues     │
-                 │ Docker Container   │
-                 └────────────────────┘
-</pre>
-</p>
+Traditional search might require:
+
+```text
+Laravel AND React AND AWS
+```
+
+Semantic search allows recruiters to express their intent naturally:
+
+```text
+"Find a senior backend developer who has
+built scalable PHP applications and has
+experience deploying systems on AWS."
+```
+
+The system can use vector similarity to retrieve candidates whose experience is semantically relevant to the query.
+
+This provides the foundation for future capabilities such as:
+
+* AI candidate matching
+* Job-to-candidate recommendations
+* Candidate ranking
+* Hybrid semantic + structured search
+* RAG-based recruiter assistance
+* Explainable candidate recommendations
+
 ---
 
-## Tech Stack
+# 🏗️ System Architecture
 
-### Frontend
+```text
+                         ┌──────────────────┐
+                         │      Recruiter   │
+                         └────────┬─────────┘
+                                  │ HTTPS
+                                  ▼
+                         ┌──────────────────┐
+                         │ recruitsignal.app│
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │ Nginx            │
+                         │ Reverse Proxy    │
+                         │ Docker           │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │ Laravel API      │
+                         │ PHP 8.4          │
+                         │ Docker           │
+                         └───────┬──────────┘
+                                 │
+              ┌──────────────────┼──────────────────┐
+              │                  │                  │
+              ▼                  ▼                  ▼
+      ┌──────────────┐   ┌───────────────┐  ┌──────────────┐
+      │ Amazon RDS   │   │ Laravel Queue │  │ OpenAI       │
+      │ MySQL        │   │ Worker        │  │ API          │
+      └──────────────┘   └───────┬───────┘  └──────────────┘
+                                 │
+                                 ▼
+                         ┌──────────────────┐
+                         │ Pinecone         │
+                         │ Vector Database  │
+                         └──────────────────┘
+```
+
+---
+
+# 🛠️ Technology Stack
+
+## Frontend
+
 * React
 * Vite
 * Tailwind CSS
 * Axios
 * React Router
-### Backend
-* Laravel 12/13
+
+## Backend
+
+* Laravel 13
 * PHP 8.4
+* RESTful APIs
 * Laravel Queue Workers
-* RESTful API
-### Database
-* Amazon RDS MySQL
-### Infrastructure
-* AWS EC2 (Ubuntu)
+* OpenAI API
+
+## Database
+
+* MySQL
+* Amazon RDS
+
+## AI / Search
+
+* OpenAI
+* Embeddings
+* Pinecone
+* Semantic Search
+* RAG architecture *(ongoing evolution)*
+
+## Infrastructure
+
+* AWS EC2
 * Docker
 * Docker Compose
 * Nginx
 * Let's Encrypt SSL
-### DevOps
+
+## DevOps
+
 * Git
 * GitHub
-* GitHub Actions (CI/CD)
-* Dockerized Production Deployment
+* GitHub Actions
+* CI/CD
+* Dockerized production deployment
 
 ---
-### Deployment Workflow Architecture
 
-<p align="center">
-<pre>
-       Developer
-           │
-           │ Push Code
-           ▼
-   GitHub Repository
-           │
-           │ GitHub Actions
-           ▼
-     CI/CD Pipeline
-           │
-           │ Secure SSH Deployment
-           ▼
-     AWS EC2 Server
-           │
-           ├── Pull Latest Code
-           ├── Rebuild Containers
-           ├── Restart Services
-           └── Verify Deployment
-           │
-           ▼
-   recruitsignal.app
-</pre>
-</p>
+# ☁️ Cloud Infrastructure
+
+The production application is deployed on AWS.
+
+Current infrastructure includes:
+
+```text
+AWS
+│
+└── EC2
+    │
+    ├── Nginx Container
+    ├── Laravel Application Container
+    └── Laravel Queue Worker
+         │
+         └── Amazon RDS MySQL
+```
+
+The application uses Docker Compose to manage production services on the EC2 instance.
+
+HTTPS is configured using Let's Encrypt SSL.
+
+---
+
+# 🔄 CI/CD Pipeline
+
+RecruitSignal uses GitHub Actions to automate production deployment.
+
+```text
+             Developer
+                 │
+                 │ Push
+                 ▼
+          GitHub Repository
+                 │
+                 │ Pull Request
+                 ▼
+               Review
+                 │
+                 │ Merge
+                 ▼
+                main
+                 │
+                 ▼
+          GitHub Actions
+                 │
+                 ├── Run Tests
+                 │
+                 └── Deploy
+                       │
+                       │ Secure SSH
+                       ▼
+                  AWS EC2
+                       │
+                       ├── Pull Latest Code
+                       ├── Rebuild Containers
+                       ├── Restart Services
+                       └── Verify Deployment
+                       │
+                       ▼
+               recruitsignal.app
+```
 
 ### Deployment Process
-1. Developer creates a feature branch.
-2. Changes are committed and pushed to GitHub.
-3. A Pull Request is reviewed and merged into main.
-4. GitHub Actions automatically triggers the deployment workflow.
-5. The workflow connects securely to the AWS EC2 instance.
-6. Docker containers are rebuilt and restarted.
-7. The updated application becomes available at https://recruitsignal.app.
 
-## Goal
+1. Create a feature branch.
+2. Implement and test changes locally.
+3. Commit and push changes to GitHub.
+4. Open a Pull Request.
+5. Review and merge the Pull Request.
+6. GitHub Actions runs the CI/CD workflow.
+7. Automated tests are executed.
+8. The deployment connects securely to AWS EC2.
+9. Production Docker containers are rebuilt and restarted.
+10. The updated application becomes available through `recruitsignal.app`.
 
-By the end of this project, the system will simulate a real-world SaaS-style recruiter engagement platform with scalable architecture, asynchronous event processing, and cloud deployment—serving as a strong demonstration of full-stack and cloud engineering capabilities.
+---
+
+# 📈 System Evolution
+
+RecruitSignal is being developed incrementally to demonstrate realistic software evolution.
+
+### Phase 1 — Foundation
+
+* Project architecture
+* Laravel backend
+* React frontend
+* Database design
+* REST API
+* Authentication
+
+### Phase 2 — Lead Management
+
+* Lead CRUD
+* Lead search
+* Filtering
+* Pagination
+* Lead status management
+* Dashboard analytics
+
+### Phase 3 — Resume Processing
+
+* Resume upload
+* Resume-to-lead association
+* PDF text extraction
+* Asynchronous processing
+
+### Phase 4 — AI Candidate Profiles
+
+* OpenAI resume analysis
+* Structured candidate extraction
+* Candidate profile creation
+* Candidate profile viewing
+* Candidate profile editing
+
+### Phase 5 — Semantic Search
+
+* Candidate document generation
+* Embedding generation
+* Pinecone integration
+* Vector indexing
+* Semantic candidate search
+
+### Phase 6 — AI Recruiting Intelligence
+
+Planned capabilities include:
+
+* Hybrid semantic + structured search
+* Job management
+* Candidate-to-job matching
+* Candidate ranking
+* RAG-based recruiter assistant
+* Explainable AI recommendations
+* Search evaluation and relevance measurement
+
+---
+
+# 🧩 Engineering Principles
+
+RecruitSignal follows a production-oriented development approach:
+
+### Separation of Concerns
+
+Frontend, backend, infrastructure, AI processing, and search responsibilities are separated into appropriate application layers.
+
+### Asynchronous Processing
+
+Resource-intensive operations such as resume processing and AI-related workflows are designed to run through background queues where appropriate.
+
+### API-First Architecture
+
+The React frontend communicates with the Laravel backend through RESTful APIs.
+
+### Incremental Development
+
+Features are developed through isolated feature branches and meaningful commits.
+
+### Automated Testing
+
+Backend functionality is covered by automated tests as features are introduced.
+
+### Cloud-Native Deployment
+
+The production environment is containerized and deployed to AWS.
+
+### AI as a System Component
+
+AI functionality is integrated into the application's processing pipeline rather than treated as an isolated demonstration.
+
+---
+
+# 🎯 Future Direction
+
+The long-term goal of RecruitSignal is to evolve from a candidate management application into an **AI-assisted recruiting intelligence platform**.
+
+The next major architectural direction is to combine:
+
+```text
+Structured Candidate Data
+          +
+Semantic Search
+          +
+Vector Retrieval
+          +
+LLM Reasoning
+          +
+Recruiter Context
+```
+
+to create a system capable of helping recruiters discover, compare, and evaluate candidates using natural language.
+
+The ultimate goal is to demonstrate how modern **full-stack engineering, cloud infrastructure, asynchronous processing, vector search, and generative AI** can be combined into a production-oriented application.
+
+---
+
+## 📌 Project Status
+
+**Active Development**
+
+RecruitSignal is an evolving personal engineering project. Features and architecture are continuously being expanded as new technologies and engineering patterns are explored.
+
+The project serves as a practical demonstration of full-stack development, cloud engineering, AI integration, semantic search, DevOps, and production-oriented system design.
